@@ -1,4 +1,4 @@
-package com.tienda.service;
+package com.gallery_m.service;
 
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
