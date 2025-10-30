@@ -102,6 +102,13 @@
             <version>1.2.2.1-jre17</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.5.0</version>
+        </dependency>
+        
     </dependencies>
 
     <build>
