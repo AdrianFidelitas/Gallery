@@ -221,11 +221,11 @@ html {
     .footer-gallery {
         padding: 2rem 0 1rem;
     }
-    
+
     .footer-title {
         margin-top: 1.5rem;
     }
-    
+
     .footer-logo {
         font-size: 1.8rem;
     }
@@ -235,11 +235,11 @@ html {
     .social-icons {
         justify-content: center;
     }
-    
+
     .payment-icons {
         justify-content: center;
     }
-    
+
     .footer-desc {
         text-align: center;
         margin: 0 auto;
@@ -250,15 +250,59 @@ html {
     .footer-gallery {
         padding: 1.5rem 0 1rem;
     }
-    
+
     .newsletter-form {
         flex-direction: column;
         gap: 10px;
     }
-    
+
     .newsletter-input,
     .newsletter-btn {
         border-radius: 10px;
         width: 100%;
+    }
+}
+body {
+    background-color: #121212; /* fondo oscuro general */
+}
+
+.category-card {
+    background-color: #1c1c1c;
+    border-radius: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.category-card:hover img {
+    transform: scale(1.05);
+    filter: brightness(1);
+}
+
+.category-card:hover .overlay {
+    opacity: 1;
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.08);
+}
+
+.btn-outline-light {
+    border-width: 1.5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-outline-light:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+h2 {
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 576px) {
+    .card-img-container {
+        height: 180px;
     }
 }
