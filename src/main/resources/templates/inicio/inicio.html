@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{general/fragmentos :: head}">
+        <title th:text="${tituloPagina}">Gallery Brands - Inicio</title>
+    </head>
+
+    <body class="bg-white text-dark">
+
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <section id="hero" class="text-center d-flex align-items-center justify-content-center">
+            <div class="container-fluid p-0" style="max-width: 1200px;">
+                <div class="row g-0">
+
+                    <!-- Imagen izquierda -->
+                    <div class="col-md-4 d-none d-md-block position-relative">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/proyectowebpatrones-7562d.firebasestorage.app/o/Imagenes%2FChicagoSign12_1024x1024.webp?alt=media&token=61de6be0-a517-4909-85e7-979bce8ccaff"
+                             class="img-fluid w-100 banner-img" alt="banner izquierdo">
+                    </div>
+
+                    <!-- Banner central con imagen de fondo -->
+                    <div class="col-md-4 position-relative d-flex align-items-center justify-content-center banner-center">
+                        <!-- Capa de oscurecimiento -->
+                        <div class="banner-overlay"></div>
+
+                        <!-- Contenido -->
+                        <div class="text-center text-white position-relative px-3">
+                            <h1 class="display-6 fw-bold mb-3">GALLERY BRANDS</h1>
+                            <a href="/catalogo" class="btn btn-success btn-md">Comprar Ahora</a>
+                        </div>
+                    </div>
+
+                    <!-- Imagen derecha -->
+                    <div class="col-md-4 d-none d-md-block position-relative">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/proyectowebpatrones-7562d.firebasestorage.app/o/Imagenes%2Fnike-dunk-low-white.jpg?alt=media&token=3f149b84-34b4-4a6b-973b-c4418e958154"
+                             class="img-fluid w-100 banner-img" alt="banner derecho">
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Estilos del banner  -->
+        <style>
+            #hero {
+                overflow: hidden;
+                padding: 2rem 0;
+            }
+
+            .banner-img {
+                height: 250px;             /* Banner más pequeño */
+                object-fit: cover;
+                object-position: center;
+                display: block;
+            }
+
+            .banner-center {
+                height: 250px;
+                background: #111;
+                border-left: 4px solid #198754;
+                border-right: 4px solid #198754;
+            }
+
+            @media (max-width: 768px) {
+                .banner-img,
+                .banner-center {
+                    height: 180px;
+                }
+                #hero {
+                    padding: 1rem 0;
+                }
+            }
+        </style>
+
+        <!-- Productos recomendados -->
+        <section id="productos" class="py-5 bg-light">
+            <div class="container text-center">
+                <h2 class="text-success mb-4">Productos Recomendados</h2>
+
+                <div class="row justify-content-center">
+
+                    <!-- Producto 1 -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/proyectowebpatrones-7562d.firebasestorage.app/o/Imagenes%2Fnike-air-max-90-essential-wolf-s-size-7-616730-012.jpg?alt=media&token=8a0d33a3-9e30-4dfb-9f40-58c87950d10d"
+                                 class="card-img-top producto-img" alt="Producto 1">
+                                <div class="card-body">
+                                    <h5 class="card-title">Nombre del Producto</h5>
+                                    <p class="card-text text-muted">$$$</p>
+                                </div>
+                        </div>
+                    </div>
+
+                    <!-- Producto 2 -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/proyectowebpatrones-7562d.firebasestorage.app/o/Imagenes%2Fchampiones-adidas-forum-low-verde-championes-adidas-forum-low-verde.jpg?alt=media&token=e2092b28-3ff1-49eb-bba4-7c87670d3be6"
+                                 class="card-img-top producto-img" alt="Producto 2">
+                                <div class="card-body">
+                                    <h5 class="card-title">Nombre del Producto</h5>
+                                    <p class="card-text text-muted">$$$</p>
+                                </div>
+                        </div>
+                    </div>
+
+                    <!-- Producto 3 -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/proyectowebpatrones-7562d.firebasestorage.app/o/Imagenes%2F100000317_1.webp?alt=media&token=f68e4725-f9d1-4357-8227-fe1abf8d4ffe"
+                                 class="card-img-top producto-img" alt="Producto 3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Nombre del Producto</h5>
+                                    <p class="card-text text-muted">$$$</p>
+                                </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Estilo para unificar tamaño de las imágenes -->
+            <style>
+                .producto-img {
+                    height: 280px;           /* altura uniforme */
+                    object-fit: cover;       /* recorta sin deformar */
+                    object-position: center; /* centra la imagen */
+                    border-radius: 0.5rem 0.5rem 0 0;
+                }
+
+                @media (max-width: 768px) {
+                    .producto-img {
+                        height: 200px; /* más pequeño en móvil */
+                    }
+                }
+            </style>
+        </section>
+
+        </section>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
