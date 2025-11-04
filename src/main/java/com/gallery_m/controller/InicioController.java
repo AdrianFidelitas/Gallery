@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class InicioController {
 
-    @GetMapping({"/", "/inicio"})
+    @GetMapping({"/", "/Inicio"})
     public String inicio(Model model) {
         // Datos generales de la página
         model.addAttribute("tituloPagina", "Inicio - Gallery Brands");

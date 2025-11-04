@@ -225,15 +225,14 @@ CREATE TABLE constante (
 )
 ENGINE = InnoDB;
 
-
 /*
 Este pobla la tablas con un registro para tenerlo como referencia
 */
-
 -- Poblar tabla categoria
 INSERT INTO categoria (nombre_categoria, ruta_imagen, activo)
-VALUES ('Formal', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrE57O1gq8afzC8dGLZLrWBAPjzVyVsrzf3w&s', TRUE);
-
+VALUES ('Formal', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrE57O1gq8afzC8dGLZLrWBAPjzVyVsrzf3w&s', TRUE),
+('Deportiva', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5lCSWFEPwu0w257JgTz9iYpjMUOSZ-PcncA&s', TRUE),
+('Sneakers', 'https://m.media-amazon.com/images/I/81knDNjiLhL.jpg', TRUE);
 -- Poblar tabla marca
 INSERT INTO marca (nombre_marca)
 VALUES ('Sperry');

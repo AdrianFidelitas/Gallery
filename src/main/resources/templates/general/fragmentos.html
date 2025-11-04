@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"      
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <head th:fragment="head">
-        <title>TechShop</title>
+        <title>Gallery</title>
         <meta charset="UTF-8"/>
         <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
         <link th:href="@{/webjars/font-awesome/css/all.css}" rel="stylesheet"/>
@@ -19,7 +19,7 @@
                 <div class="container-fluid px-5">
 
                     <!-- Logo -->
-                    <a class="navbar-brand d-flex align-items-center" href="#">
+                    <a class="navbar-brand d-flex align-items-center" th:href="@{/Inicio}">
                         <img src="https://static1.squarespace.com/static/62840e26929fee1196f4ef41/t/6285664fafc3b8486963a668/1652909647737/L_GALLERY_1C_K_E.png?format=1500w" 
                              alt="Logo" width="120" class="logo">
                     </a>
@@ -41,7 +41,7 @@
 
                         <!-- Menú de navegación -->
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep active" href="#">INICIO</a></li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep active" th:href="@{/Inicio}">INICIO</a></li>
                             <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/sobre}">SOBRE NOSOTROS</a></li>
                             <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/categoria/listado}">CATÁLOGO</a></li>
                             <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" href="#">+INFO</a></li>
@@ -69,10 +69,8 @@
                             Tu destino premium para los mejores tenis del mercado. Calidad, estilo y comodidad en cada paso.
                         </p>
                         <div class="social-icons">
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-tiktok"></i></a>
+                            <a href="https://www.instagram.com/gallerybrands.506/"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.tiktok.com/@gallerybrands.506"><i class="fab fa-tiktok"></i></a>
                         </div>
                     </div>
 
@@ -80,11 +78,10 @@
                     <div class="col-lg-2 col-md-6 mb-4">
                         <h4 class="footer-title">Enlaces Rápidos</h4>
                         <ul class="footer-links">
-                            <li><a href="#">Inicio</a></li>
-                            <li><a href="#">Novedades</a></li>
-                            <li><a href="#">Hombre</a></li>
-                            <li><a href="#">Mujer</a></li>
-                            <li><a href="#">Ofertas</a></li>
+                            <li><a th:href="@{/Inicio}">Inicio</a></li>
+                            <li><a th:href="@{/categoria/listado}">Catalogo</a></li>
+                            <li><a th:href="@{/sobre}">Preguntas Frecuentes</a></li>
+
                         </ul>
                     </div>
 
@@ -93,10 +90,6 @@
                         <h4 class="footer-title">Ayuda</h4>
                         <ul class="footer-links">
                             <li><a href="#">Contacto</a></li>
-                            <li><a href="#">Envíos</a></li>
-                            <li><a href="#">Devoluciones</a></li>
-                            <li><a href="#">Guía de tallas</a></li>
-                            <li><a href="#">Preguntas Frecuentes</a></li>
                         </ul>
                     </div>
 
@@ -105,15 +98,15 @@
                         <h4 class="footer-title">Contacto</h4>
                         <div class="contact-info">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>Av. Principal 123, Ciudad</span>
+                            <span>Heredia, San Joaquin</span>
                         </div>
                         <div class="contact-info">
                             <i class="fas fa-phone"></i>
-                            <span>+1 234 567 890</span>
+                            <span>+506 6138-1593</span>
                         </div>
                         <div class="contact-info">
                             <i class="fas fa-envelope"></i>
-                            <span>info@gallery.com</span>
+                            <span>gallerybrands506@gmail.com</span>
                         </div>
 
                         <h5 class="mt-4 mb-3" style="color: var(--blanco);">Newsletter</h5>
@@ -141,7 +134,7 @@
 
                 <!-- Línea inferior -->
                 <div class="footer-bottom">
-                    <p>&copy; 2025 Gallery. Todos los derechos reservados. | Diseñado con <i class="fas fa-heart" style="color: #e25555;"></i> para amantes del calzado</p>
+                    <p>&copy; 2025 Gallery. Todos los derechos reservados.</p>
                 </div>
             </div>
         </footer>
