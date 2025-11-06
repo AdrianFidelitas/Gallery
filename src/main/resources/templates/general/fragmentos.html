@@ -14,7 +14,6 @@
     </head>
     <body>
         <header th:fragment="header" class="header">
-            <!-- NAVBAR -->
             <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top py-3 border-bottom">
                 <div class="container-fluid px-5">
 
@@ -33,18 +32,20 @@
                     <div class="collapse navbar-collapse" id="navbarContent">
 
                         <!-- Buscador centrado -->
-                        <div class="mx-auto my-3 my-lg-0 d-flex justify-content-center" style="max-width: 420px;">
+                        <div class="mx-auto my-3 my-lg-0 d-flex justify-content-center" >
                             <div class="input-group search-bar">
-                                <input type="search" class="form-control shadow-none" placeholder="Buscar productos..." aria-label="Buscar">
+                                <input type="search" class="form-control shadow-none" 
+                                       th:placeholder="#{header.nav.buscar.placeholder}" 
+                                       aria-label="Buscar">
                             </div>
                         </div>
 
                         <!-- Menú de navegación -->
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep active" th:href="@{/Inicio}">INICIO</a></li>
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/sobre}">SOBRE NOSOTROS</a></li>
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/categoria/listado}">CATÁLOGO</a></li>
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" href="#">+INFO</a></li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep active" th:href="@{/Inicio}" th:text="#{header.nav.inicio}"></a></li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/sobre}" th:text="#{header.nav.sobreNosotros}"></a></li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/categoria/listado}" th:text="#{header.nav.catalogo}"></a></li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" href="#" th:text="#{header.nav.masInfo}"></a></li>
 
                             <!-- Ícono carrito -->
                             <li class="nav-item ms-3">
@@ -62,11 +63,10 @@
         <footer class="footer-gallery">
             <div class="container">
                 <div class="row">
-                    <!-- Columna 1: Logo y descripción -->
+                    <!-- Columna 1 -->
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="footer-logo">GALLERY</div>
-                        <p class="footer-desc">
-                            Tu destino premium para los mejores tenis del mercado. Calidad, estilo y comodidad en cada paso.
+                        <div class="footer-logo" th:text="#{footer.logo}"></div>
+                        <p class="footer-desc" th:text="#{footer.descripcion}">
                         </p>
                         <div class="social-icons">
                             <a href="https://www.instagram.com/gallerybrands.506/"><i class="fab fa-instagram"></i></a>
@@ -74,45 +74,45 @@
                         </div>
                     </div>
 
-                    <!-- Columna 2: Enlaces rápidos -->
+                    <!-- Columna 2 -->
                     <div class="col-lg-2 col-md-6 mb-4">
-                        <h4 class="footer-title">Enlaces Rápidos</h4>
+                        <h4 class="footer-title" th:text="#{footer.enlacesRapidos}"></h4>
                         <ul class="footer-links">
-                            <li><a th:href="@{/Inicio}">Inicio</a></li>
-                            <li><a th:href="@{/categoria/listado}">Catalogo</a></li>
-                            <li><a th:href="@{/sobre}">Preguntas Frecuentes</a></li>
-
+                            <li><a th:href="@{/Inicio}" th:text="#{footer.enlace.inicio}"></a></li>
+                            <li><a th:href="@{/categoria/listado}" th:text="#{footer.enlace.catalogo}"></a></li>
+                            <li><a th:href="@{/sobre}" th:text="#{footer.enlace.preguntas}"></a></li>
                         </ul>
                     </div>
 
-                    <!-- Columna 3: Ayuda -->
+                    <!-- Columna 3 -->
                     <div class="col-lg-2 col-md-6 mb-4">
-                        <h4 class="footer-title">Ayuda</h4>
+                        <h4 class="footer-title" th:text="#{footer.ayuda}"></h4>
                         <ul class="footer-links">
-                            <li><a href="#">Contacto</a></li>
+                            <li><a href="#" th:text="#{footer.contacto}"></a></li>
                         </ul>
                     </div>
 
-                    <!-- Columna 4: Contacto y newsletter -->
+                    <!-- Columna 4 -->
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <h4 class="footer-title">Contacto</h4>
+                        <h4 class="footer-title" th:text="#{footer.contacto}"></h4>
                         <div class="contact-info">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>Heredia, San Joaquin</span>
+                            <span th:text="#{footer.direccion}"></span>
                         </div>
                         <div class="contact-info">
                             <i class="fas fa-phone"></i>
-                            <span>+506 6138-1593</span>
+                            <span th:text="#{footer.telefono}"></span>
                         </div>
                         <div class="contact-info">
                             <i class="fas fa-envelope"></i>
-                            <span>gallerybrands506@gmail.com</span>
+                            <span th:text="#{footer.correo}"></span>
                         </div>
 
-                        <h5 class="mt-4 mb-3" style="color: var(--blanco);">Newsletter</h5>
-                        <p style="color: var(--gris-claro); font-size: 0.9rem;">Suscríbete para recibir ofertas exclusivas y novedades.</p>
+                        <h5 class="mt-4 mb-3"  th:text="#{footer.newsletter.titulo}"></h5>
+                        <p th:text="#{footer.newsletter.descripcion}">
+                        </p>
                         <form class="newsletter-form">
-                            <input type="email" class="newsletter-input" placeholder="Tu correo electrónico" required>
+                            <input type="email" class="newsletter-input" th:placeholder="#{footer.newsletter.placeholder}" required>
                                 <button type="submit" class="newsletter-btn">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
@@ -122,7 +122,7 @@
 
                 <!-- Métodos de pago -->
                 <div class="payment-methods">
-                    <h5 class="mb-3" style="color: var(--blanco);">Métodos de Pago</h5>
+                    <h5 class="mb-3"  th:text="#{footer.metodosPago}"></h5>
                     <div class="payment-icons">
                         <i class="fab fa-cc-visa"></i>
                         <i class="fab fa-cc-mastercard"></i>
@@ -134,43 +134,12 @@
 
                 <!-- Línea inferior -->
                 <div class="footer-bottom">
-                    <p>&copy; 2025 Gallery. Todos los derechos reservados.</p>
+                    <p th:utext="#{footer.copy}"></p>
                 </div>
             </div>
         </footer>
+
     </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
