@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <head th:replace="~{general/plantilla :: head}"/>
+
+    <body>
+        <!-- Fragmento 1 para Agregar zapatos en ventana modal -->
+
+        <section th:fragment="agregar">
+            <div class="row py-4 mb-2 bg-light">
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary" sec:authorize="hasRole('ROLE_ADMIN')"
+                            data-bs-toggle='modal' data-bs-target='#agregarZapatoModal'>
+                        <i class='fa-solid fa-plus'></i>[[#{zapato.agregar}]]
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Agregar-->
+            <div class='modal fade' id='agregarZapatoModal' tabindex='-1'>
+                <div class='modal-dialog'>
+                    <div class='modal-content'>
+                        <div class='modal-header bg-info text-white'>
+                            <h1 class='modal-title fs-5'>
+                                <i class='fa-solid fa-shoe-prints'></i>[[#{zapato.agregar}]]
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form th:action='@{/zapato/guardar}' th:object='${zapato}'
+                              class='was-validated' enctype='multipart/form-data' method="post">
+                            <div class='modal-body'>
+
+                                <!-- Categoria-->
+                                <div class='mb-3'>
+                                    <label>[[#{zapato.categoria}]]</label>
+                                    <select name='categoria.idCategoria' class='form-select'>
+                                        <option th:each='c : ${categorias}' th:value='${c.idCategoria}'>
+                                            [[${c.nombreCategoria}]]
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Marca-->
+                                <div class='mb-3'>
+                                    <label>[[#{zapato.marca}]]</label>
+                                    <select name='marca.idMarca' class='form-select'>
+                                        <option th:each='m : ${marcas}'th:value='${m.idMarca}'>
+                                            [[${c.nombreMarca}]]
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Nombre-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.nombre}]]</label>
+                                    <input type="text" name="nombreZapato" class="form-control" required maxlength="50"/>
+                                </div>
+
+                                <!-- Descripcion-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.descripcion}]]</label>
+                                    <textarea name="descripcion" class="form-control" rows="3" maxlength="1024"></textarea>
+                                </div>
+
+                                <!-- Precio-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.precio}]]</label>
+                                    <input type="number" name="precio" class="form-control" required min="0"/>
+                                </div>
+
+                                <!-- Activo-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.activo}]]</label>
+                                    <input type="checkbox" name="activo" class="form-check-input"/>
+                                </div>
+
+                                <!-- Imagen-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.imagen}]]</label>
+                                    <input type="file" name="imagenFile" class="form-control" onchange="mostrarImagen(this);"/>
+                                    <img id="blah" src="#" height="200"/>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    [[#{accion.cerrar}]]
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    [[#{accion.guardar}]]
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fragmento 2 Listado de zapatos -->
+        <section th:fragment="listado" class="p-3">
+            <div class="row p-3">
+                <div class="col-md-9">
+                    <div class="card p-2">
+                        <div class="card-header"><h4>[[#{zapato.listado}]]</h4></div>
+
+                        <div class="card-body">
+                            <div th:if="${zapatos != null and !zapatos.empty}">
+
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>[[#{zapato.nombre}]]</th>
+                                            <th>[[#{zapato.precio}]]</th>
+                                            <th>[[#{zapato.categoria}]]</th>
+                                            <th>[[#{zapato.marca}]]</th>
+                                            <th>[[#{zapato.imagen}]]</th>
+                                            <th>[[#{zapato.activo}]]</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr th:each="z : ${zapatos}">
+                                            <td>[[${z.idZapato}]]</td>
+                                            <td>[[${z.nombreZapato}]]</td>
+                                            <td class="text-end">[[${#numbers.formatCurrency(z.precio)}]]</td>
+                                            <td>[[${z.categoria.nombreCategoria}]]</td>
+                                            <td>[[${z.marca.nombreMarca}]]</td>
+                                            <td><img th:src="@{${z.rutaImagen}}" height="75"/></td>
+                                            <td th:text="${z.activo} ? 'Activo' : 'Inactivo'"></td>
+
+                                            <td sec:authorize="hasRole('ROLE_ADMIN')">
+
+                                                <!-- Eliminar Zapato -->
+                                                <button class="btn btn-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#confirmModal"
+                                                        th:data-bs-id="${z.idZapato}"
+                                                        th:data-bs-descripcion="${z.nombreZapato}">
+                                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                                </button>
+
+                                                <!-- Modificar Zapato -->
+                                                <a th:href="@{/zapato/modificar/}+${z.idZapato}" class="btn btn-warning">
+                                                    <i class="fas fa-pencil-alt"></i> [[#{accion.actualizar}]]
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="text-center p-2" th:if="${zapatos == null or zapatos.empty}">
+                                [[#{lista.vacia}]]
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- TOTAL DE ZAPATOS -->
+                <div class="col-md-3">
+                    <div class="card text-center bg-success text-white mb-3">
+                        <div class="card-body">
+                            <h3>[[#{zapato.total}]]</h3>
+                            <h4 class="fs-2"><i class="fas fa-shoe-prints"></i> [[${totalZapatos}]]</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fragmento 3 Modificar en la pagina modifica.html -->
+
+        <section th:fragment="editar">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <form th:action="@{/zapato/guardar}" th:object="${zapato}"
+                          method="POST" class="was-validated" enctype="multipart/form-data">
+
+                        <input type="hidden" th:field="*{idZapato}"/>
+                        <input type="hidden" th:field="*{rutaImagen}"/>
+
+                        <div class="row py-4 mb-4 bg-light">
+                            <div class="col-md-4 d-grid">
+                                <a th:href="@{/zapato/listado}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
+                                </a>
+                            </div>
+
+                            <div class="col-md-4 d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>[[#{accion.actualizar}]]</h4>
+                            </div>
+
+                            <div class="card-body">
+
+                                <!-- Categoria-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.categoria}]]</label>
+                                    <select th:field="*{categoria.idCategoria}" class="form-select">
+                                        <option th:each="c : ${categorias}" th:value="${c.idCategoria}">
+                                            [[${c.nombreCategoria}]]
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!--Marca-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.marca}]]</label>
+                                    <select th:field="*{marca.idMarca}" class="form-select">
+                                        <option th:each="m : ${marcas}" th:value="${m.idMarca}">
+                                            [[${m.nombreMarca}]]
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!--Nombre-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.nombre}]]</label>
+                                    <input type="text" th:field="*{nombreZapato}" class="form-control" required/>
+                                </div>
+
+                                <!--Descripcion Zapato-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.descripcion}]]</label>
+                                    <textarea th:field="*{descripcion}" class="form-control"></textarea>
+                                </div>
+
+                                <!--Precio Zapato-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.precio}]]</label>
+                                    <input type="number" th:field="*{precio}" class="form-control" required min="0"/>
+                                </div>
+
+                                <!--Zapato Activo-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.activo}]]</label>
+                                    <input type="checkbox" th:field="*{activo}" class="form-check-input"/>
+                                </div>
+
+                                <!--Imagen Zapato-->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.imagen}]]</label>
+                                    <input type="file" name="imagenFile" class="form-control"
+                                           onchange="mostrarImagen(this);"/>
+                                    <img id="blah" th:src="@{${zapato.rutaImagen}}" height="200"/>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fragmento 3 Modificar en la pagina modifica.html -->
+        <section th:fragment="confirmarEliminar">
+
+            <div class="modal fade" id="confirmModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <form th:action="@{/zapato/eliminar}" method="post">
+                            <input type="hidden" name="idZapato" id="modalId"/>
+                            <div class="modal-header bg-warning text-white">
+                                <h5 class="modal-title">
+                                    [[#{accion.confirmar}]]
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <p>
+                                    [[#{accion.confirmar.texto1}]]
+                                    <span id="modalDescripcion"></span>?
+                                </p>
+                                <h6>[[#{accion.confirmar.texto2}]]</h6>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">
+                                    [[#{accion.eliminar}]]
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    [[#{accion.cerrar}]]
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
