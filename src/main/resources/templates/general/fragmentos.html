@@ -45,8 +45,16 @@
                             <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep active" th:href="@{/Inicio}" th:text="#{header.nav.inicio}"></a></li>
                             <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/sobre}" th:text="#{header.nav.sobreNosotros}"></a></li>
                             <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/categoria/listado}" th:text="#{header.nav.catalogo}"></a></li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/zapato/listado}">
+                                    CRUD Zapatos
+                                </a>
+                            </li>
+
                             <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" href="#" th:text="#{header.nav.masInfo}"></a></li>
-                            
+
+
+
                             <!-- Botones para indicar si esta logueado o no -->
                             <ul class="navbar-nav" sec:authorize="!isAuthenticated()">
                                 <li class="nav-item">
@@ -66,14 +74,14 @@
                                 <li class="nav-item my-auto">
                                     <form method="post" th:action="@{/logout}">
                                         <button class="btn-nav-link fw-semibold text-dark mx-2 nav-sep" type="submit">
-                                        <i class="fas fa-sign-out"></i>
-                                        <span class="ms-1" th:text="#{header.nav.logout}"></span>
+                                            <i class="fas fa-sign-out"></i>
+                                            <span class="ms-1" th:text="#{header.nav.logout}"></span>
                                         </button>
                                     </form> 
                                 </li>                                
                             </ul>
-                            
-                            
+
+
 
                             <!-- Ícono carrito -->
                             <li class="nav-item ms-3">

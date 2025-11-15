@@ -115,12 +115,12 @@ public class ProjectConfig implements WebMvcConfigurer {
     public static final String[] USUARIO_URLS = {"/facturar/carrito"};
 
     public static final String[] ADMIN_O_VENDEDOR_URLS = {
-        "/categoria/listado", "/producto/listado", "/usuario/listado"
+        "/categoria/listado", "/zapato/listado", "/usuario/listado"
     };
 
     public static final String[] ADMIN_URLS = {
         "/categoria/nuevo", "/categoria/guardar", "/categoria/modificar/**", "/categoria/eliminar/**",
-        "/producto/nuevo", "/producto/guardar", "/producto/modificar/**", "/producto/eliminar/**",
+        "/zapato/nuevo", "/zapato/guardar", "/zapato/modificar/**", "/zapato/eliminar/**",
         "/usuario/nuevo", "/usuario/guardar", "/usuario/modificar/**", "/usuario/eliminar/**"
     };
 

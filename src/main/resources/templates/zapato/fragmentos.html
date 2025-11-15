@@ -48,7 +48,7 @@
                                     <label>[[#{zapato.marca}]]</label>
                                     <select name='marca.idMarca' class='form-select'>
                                         <option th:each='m : ${marcas}'th:value='${m.idMarca}'>
-                                            [[${c.nombreMarca}]]
+                                            [[${m.nombreMarca}]]
                                         </option>
                                     </select>
                                 </div>
