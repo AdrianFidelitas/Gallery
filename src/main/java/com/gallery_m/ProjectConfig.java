@@ -109,18 +109,18 @@ public class ProjectConfig implements WebMvcConfigurer {
         "/js/**", "/css/**", "/img/**",
         "/videos/**", "/audios/**", "/fav/**",
         "/webjars/**",
-        "/login", "/acceso_denegado"
+        "/login", "/acceso_denegado",
+        "/zapato/categoria/**"
     };
 
     public static final String[] USUARIO_URLS = {"/facturar/carrito"};
 
     public static final String[] ADMIN_O_VENDEDOR_URLS = {
-        "/categoria/listado", "/zapato/listado", "/usuario/listado"
+        "/categoria/listado", "/usuario/listado"
     };
 
     public static final String[] ADMIN_URLS = {
         "/categoria/nuevo", "/categoria/guardar", "/categoria/modificar/**", "/categoria/eliminar/**",
-        "/zapato/nuevo", "/zapato/guardar", "/zapato/modificar/**", "/zapato/eliminar/**",
         "/usuario/nuevo", "/usuario/guardar", "/usuario/modificar/**", "/usuario/eliminar/**"
     };
 
@@ -167,7 +167,7 @@ public class ProjectConfig implements WebMvcConfigurer {
 
         UserDetails pedro = User.builder().username("pedro")
                 .password(passwordEncoder.encode("789")).roles("USUARIO").build();
-        return new InMemoryUserDetailsManager(juan,rebeca,pedro);
+        return new InMemoryUserDetailsManager(juan, rebeca, pedro);
     }
 
 }

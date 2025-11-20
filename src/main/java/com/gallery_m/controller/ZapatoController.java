@@ -23,13 +23,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ZapatoController {
 
     private final ZapatoService zapatoService;
-
-    //Agregamos este para la categoria, conectarlo para que sea seleccionable en el dropdown de agregar
     private final CategoriaService categoriaService;
     private final MarcaService marcaService;
     private final MessageSource messageSource;
 
-    //Constructor
     public ZapatoController(ZapatoService zapatoService,
             CategoriaService categoriaService,
             MarcaService marcaService,
@@ -40,7 +37,41 @@ public class ZapatoController {
         this.messageSource = messageSource;
     }
 
-    //Metodo listados
+    @GetMapping("/categoria/{idCategoria}")
+    public String listarPorCategoria(@PathVariable Long idCategoria, Model model) {
+        try {
+            System.out.println("=== Buscando zapatos de categoría: " + idCategoria + " ===");
+            
+            // Filtrar zapatos por categoría CON VALIDACIÓN DE NULL
+            var zapatos = zapatoService.getZapatos(false)
+                    .stream()
+                    .filter(z -> z.getCategoria() != null)  // Evitar null pointer
+                    .filter(z -> z.getCategoria().getIdCategoria() != null)
+                    .filter(z -> z.getCategoria().getIdCategoria().equals(idCategoria))
+                    .toList();
+            
+            System.out.println("Zapatos encontrados: " + zapatos.size());
+            
+            model.addAttribute("zapatos", zapatos);
+            model.addAttribute("totalZapatos", zapatos.size());
+            model.addAttribute("categoriaSeleccionada", idCategoria);
+
+            var categorias = categoriaService.getCategorias(false);
+            model.addAttribute("categorias", categorias);
+
+            var marcas = marcaService.getMarcas();
+            model.addAttribute("marcas", marcas);
+
+            return "zapato/listado";
+            
+        } catch (Exception e) {
+            System.err.println("ERROR en /zapato/categoria/" + idCategoria);
+            e.printStackTrace();
+            model.addAttribute("error", "Error al cargar zapatos: " + e.getMessage());
+            return "redirect:/zapato/listado";
+        }
+    }
+
     @GetMapping("/listado")
     public String listado(Model model) {
         var zapatos = zapatoService.getZapatos(false);
@@ -56,7 +87,6 @@ public class ZapatoController {
         return "zapato/listado";
     }
 
-    //Metodo para Guardar Zapato
     @PostMapping("/guardar")
     public String guardar(@Valid Zapato zapato,
             @RequestParam MultipartFile imagenFile,
@@ -67,7 +97,6 @@ public class ZapatoController {
         return "redirect:/zapato/listado";
     }
 
-    //Metodo para Eliminar
     @PostMapping("/eliminar")
     public String eliminar(@RequestParam Integer idZapato, RedirectAttributes redirectAttributes) {
         String titulo = "todoOk";
@@ -88,7 +117,6 @@ public class ZapatoController {
         return "redirect:/zapato/listado";
     }
 
-    //Metodo para modificar por idZapato
     @GetMapping("/modificar/{idZapato}")
     public String modificar(@PathVariable Integer idZapato,
             Model model,
