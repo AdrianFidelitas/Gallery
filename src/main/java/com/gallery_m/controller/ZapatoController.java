@@ -7,6 +7,7 @@ import com.gallery_m.service.ZapatoService;
 import jakarta.validation.Valid;
 import java.util.Locale;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -22,48 +24,34 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/zapato")
 public class ZapatoController {
 
-    private final ZapatoService zapatoService;
-    private final CategoriaService categoriaService;
-    private final MarcaService marcaService;
-    private final MessageSource messageSource;
+    @Autowired
+    private ZapatoService zapatoService;
 
-    public ZapatoController(ZapatoService zapatoService,
-            CategoriaService categoriaService,
-            MarcaService marcaService,
-            MessageSource messageSource) {
-        this.zapatoService = zapatoService;
-        this.categoriaService = categoriaService;
-        this.marcaService = marcaService;
-        this.messageSource = messageSource;
-    }
+    @Autowired
+    private CategoriaService categoriaService;
 
+    @Autowired
+    private MarcaService marcaService;
+
+    @Autowired
+    private MessageSource messageSource;
+
+   
     @GetMapping("/categoria/{idCategoria}")
-    public String listarPorCategoria(@PathVariable Long idCategoria, Model model) {
+    public String listarPorCategoria(@PathVariable Integer idCategoria, Model model) {
         try {
-            System.out.println("=== Buscando zapatos de categoría: " + idCategoria + " ===");
-            
-            // Filtrar zapatos por categoría CON VALIDACIÓN DE NULL
-            var zapatos = zapatoService.getZapatos(false)
-                    .stream()
-                    .filter(z -> z.getCategoria() != null)  // Evitar null pointer
-                    .filter(z -> z.getCategoria().getIdCategoria() != null)
-                    .filter(z -> z.getCategoria().getIdCategoria().equals(idCategoria))
-                    .toList();
-            
-            System.out.println("Zapatos encontrados: " + zapatos.size());
-            
+
+            var zapatos = zapatoService.getZapatosPorCategoria(idCategoria, false);
+
+
             model.addAttribute("zapatos", zapatos);
             model.addAttribute("totalZapatos", zapatos.size());
             model.addAttribute("categoriaSeleccionada", idCategoria);
-
-            var categorias = categoriaService.getCategorias(false);
-            model.addAttribute("categorias", categorias);
-
-            var marcas = marcaService.getMarcas();
-            model.addAttribute("marcas", marcas);
+            model.addAttribute("categorias", categoriaService.getCategorias(false));
+            model.addAttribute("marcas", marcaService.getMarcas());
 
             return "zapato/listado";
-            
+
         } catch (Exception e) {
             System.err.println("ERROR en /zapato/categoria/" + idCategoria);
             e.printStackTrace();
@@ -74,17 +62,59 @@ public class ZapatoController {
 
     @GetMapping("/listado")
     public String listado(Model model) {
-        var zapatos = zapatoService.getZapatos(false);
+        var zapatos = zapatoService.getZapatosActivos();
+
+        zapatos.forEach(z -> System.out.println(
+                "ID: " + z.getIdZapato()
+                + ", Nombre: " + z.getNombreZapato()
+                + ", Categoría: " + (z.getCategoria() != null ? z.getCategoria().getNombreCategoria() : "null")
+        ));
+
         model.addAttribute("zapatos", zapatos);
         model.addAttribute("totalZapatos", zapatos.size());
-
-        var categorias = categoriaService.getCategorias(false);
-        model.addAttribute("categorias", categorias);
-
-        var marcas = marcaService.getMarcas();
-        model.addAttribute("marcas", marcas);
+        model.addAttribute("categorias", categoriaService.getCategorias(false));
+        model.addAttribute("marcas", marcaService.getMarcas());
 
         return "zapato/listado";
+    }
+
+    @GetMapping("/detalle/{idZapato}")
+    public String detalleZapato(@PathVariable Integer idZapato, Model model) {
+        try {
+            Optional<Zapato> zapatoOpt = zapatoService.getZapato(idZapato);
+
+            if (zapatoOpt.isEmpty()) {
+                return "redirect:/zapato/listado";
+            }
+            Zapato zapato = zapatoOpt.get();
+
+            model.addAttribute("zapato", zapato);
+
+            return "zapato/detalle";
+
+        } catch (Exception e) {
+            System.err.println("💥 ERROR en detalle: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/zapato/listado";
+        }
+    }
+
+    @GetMapping("/test-detalle/{id}")
+    @ResponseBody
+    public String testDetalle(@PathVariable Integer id) {
+        try {
+
+            Optional<Zapato> zapatoOpt = zapatoService.getZapato(id);
+
+            if (zapatoOpt.isPresent()) {
+                Zapato z = zapatoOpt.get();
+                return "✅ ZAPATO ENCONTRADO - Nombre: " + z.getNombreZapato();
+            } else {
+                return "❌ ZAPATO NO ENCONTRADO - ID: " + id;
+            }
+        } catch (Exception e) {
+            return "❌ ERROR: " + e.getMessage();
+        }
     }
 
     @PostMapping("/guardar")
@@ -137,4 +167,5 @@ public class ZapatoController {
 
         return "/zapato/modifica";
     }
+
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}">
+        <title th:text="${tituloPagina}"></title>
+    </head> 
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+        <div class="container my-5">
+
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/zapato/listado}">Zapatos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${zapato.nombreZapato}">Detalle</li>
+                </ol>
+            </nav>
+
+            <div class="row">
+                <!-- Imagen -->
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="product-image-container">
+                        <img class="product-image"
+                             th:src="${zapato.rutaImagen}"
+                             th:alt="${zapato.nombreZapato}"
+                             onerror="this.src='https://via.placeholder.com/500x500?text=No+Image'">
+                    </div>
+                </div>
+
+                <!-- Información -->
+                <div class="col-md-6 product-info">
+
+                    <h1 class="product-title" th:text="${zapato.nombreZapato}">Nombre</h1>
+
+                    <div class="d-flex align-items-center mt-3 mb-4">
+                        <span class="price-amount">₡<span th:text="${zapato.precio}">0</span></span>
+                    </div>
+
+                    <div class="product-meta mb-4">
+                        <span class="badge bg-dark"> 
+                            <strong th:text="#{zapato.Categoria}"></strong>:
+                            <span th:text="${zapato.categoria.nombreCategoria}"></span>
+                        </span>
+
+                        <span class="badge bg-secondary ms-2">
+                            <strong th:text="#{zapato.Marca}"></strong>:
+                            <span th:text="${zapato.marca.nombreMarca}"></span>
+                        </span>
+                    </div>
+
+                    <div class="product-description mt-4 mb-4">
+                        <h5 class="fw-bold" th:text="#{zapato.Descripcion}"></h5>
+                        <p th:text="${zapato.descripcion}"></p>
+                    </div>
+
+                    <div class="product-actions">
+                        <a onclick="history.back()" class="btn btn-dark w-100" th:text="#{accion.regresar}"></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </body>
+    <footer th:replace="~{general/fragmentos :: footer}"></footer>
+</html>

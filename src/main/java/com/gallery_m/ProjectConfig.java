@@ -110,7 +110,7 @@ public class ProjectConfig implements WebMvcConfigurer {
         "/videos/**", "/audios/**", "/fav/**",
         "/webjars/**",
         "/login", "/acceso_denegado",
-        "/zapato/categoria/**"
+        "/zapato/categoria/**","/zapato/detalle/**"
     };
 
     public static final String[] USUARIO_URLS = {"/facturar/carrito"};

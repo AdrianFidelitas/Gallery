@@ -1,7 +1,4 @@
-
 package com.gallery_m.service;
-
-
 
 import com.gallery_m.domain.Zapato;
 import com.gallery_m.repository.ZapatoRepository;
@@ -13,65 +10,105 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-//Anotacion que es un servicio
 @Service
 public class ZapatoService {
     
-   /*Metodo que ocupa el repositorio, crea el objeto repository*/
     @Autowired
     private ZapatoRepository zapatoRepository;
     
-    /*Este es un metodo para ver la tabla, registros, en una lista*/
+    /* Métodos de Consulta */
+    
     @Transactional(readOnly = true)
     public List<Zapato> getZapatos(boolean activo) {
-        /*If si el estado es activo en esa columna*/
         if (activo) {
             return zapatoRepository.findByActivoTrue();
         }
-        
-        /*Si no devuelve todos*/
         return zapatoRepository.findAll();
-        
     }
     
+    // ✅ NUEVO: Obtener zapatos activos
+    @Transactional(readOnly = true)
+    public List<Zapato> getZapatosActivos() {
+        return zapatoRepository.findByActivoTrue();
+    }
+    
+    // ✅ NUEVO: Obtener zapatos por categoría
+    @Transactional(readOnly = true)
+    public List<Zapato> getZapatosPorCategoria(Integer idCategoria, boolean incluirInactivos) {
+        if (incluirInactivos) {
+            return zapatoRepository.findByCategoriaIdCategoria(idCategoria);
+        } else {
+            return zapatoRepository.findByCategoriaIdCategoriaAndActivo(idCategoria, true);
+        }
+    }
+    
+    // ✅ NUEVO: Obtener un zapato por ID
     @Transactional(readOnly = true)
     public Optional<Zapato> getZapato(Integer idZapato) {
         return zapatoRepository.findById(idZapato);
-    }    
-    
-    @Autowired
-    private FirebaseStorageService firebaseStorageService;
-    
-    //Actualiza o inserta un registro y sube una imagen a la nube
-    @Transactional
-    public void save(Zapato zapato, MultipartFile imagenFile){
-        zapato = zapatoRepository.save(zapato);
-        if (!imagenFile.isEmpty()){ //Hay Imagen
-            try {
-            String rutaImagen = firebaseStorageService.uploadImage(
-                    imagenFile,
-                    "zapato",
-                    zapato.getIdZapato());
-            zapato.setRutaImagen(rutaImagen);
-            zapatoRepository.save(zapato);
-            } catch (Exception e) {
-                
-            }
-        }
-        
     }
-    //Elimina un registro....
+    
+    /* Métodos de Modificación */
+    
     @Transactional
-    public void delete(Integer idZapato){
-       //Se verifica si existe la producto
-       if(!zapatoRepository.existsById(idZapato)){
-         //Se lanza una excepcion
-         throw new IllegalArgumentException("El Zapato" + idZapato + "No Existe");
-       }
-        try{
-          zapatoRepository.deleteById(idZapato);
-        } catch (DataIntegrityViolationException e){
-           throw new IllegalStateException ("No se puede eliminar el zapato, por que tiene datos asociados");
+    public void save(Zapato zapato, MultipartFile imagenFile) {
+        try {
+            // ✅ Aquí va la lógica para procesar la imagen si es necesario
+            if (imagenFile != null && !imagenFile.isEmpty()) {
+                // Lógica para guardar la imagen y actualizar rutaImagen
+                // Por ahora, solo guardamos el zapato sin procesar imagen
+            }
+            
+            zapatoRepository.save(zapato);
+            
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Error de integridad de datos: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al guardar el zapato: " + e.getMessage());
         }
-    }    
+    }
+    
+    // ✅ NUEVO: Método save sobrecargado sin imagen
+    @Transactional
+    public void save(Zapato zapato) {
+        save(zapato, null);
+    }
+    
+    @Transactional
+    public void delete(Integer idZapato) {
+        try {
+            Optional<Zapato> zapatoOpt = zapatoRepository.findById(idZapato);
+            
+            if (zapatoOpt.isPresent()) {
+                Zapato zapato = zapatoOpt.get();
+                
+                // ✅ Opción 1: Eliminación física (DELETE)
+                // zapatoRepository.delete(zapato);
+                
+                // ✅ Opción 2: Eliminación lógica (UPDATE activo = false) - RECOMENDADO
+                zapato.setActivo(false);
+                zapatoRepository.save(zapato);
+                
+            } else {
+                throw new IllegalArgumentException("No se encontró el zapato con ID: " + idZapato);
+            }
+            
+        } catch (IllegalArgumentException e) {
+            throw e; // Relanzamos excepciones específicas
+        } catch (Exception e) {
+            throw new RuntimeException("Error al eliminar el zapato: " + e.getMessage());
+        }
+    }
+    
+    // ✅ NUEVO: Método para contar zapatos activos
+    @Transactional(readOnly = true)
+    public long countZapatosActivos() {
+        return zapatoRepository.countByActivoTrue();
+    }
+    
+    // ✅ NUEVO: Método para verificar si existe un zapato por nombre
+    @Transactional(readOnly = true)
+    public boolean existsByNombreZapato(String nombreZapato) {
+        return zapatoRepository.existsByNombreZapato(nombreZapato);
+    }
 }
