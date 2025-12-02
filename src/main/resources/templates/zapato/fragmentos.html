@@ -36,7 +36,7 @@
                                 <!-- Categoria-->
                                 <div class='mb-3'>
                                     <label>[[#{zapato.categoria}]]</label>
-                                    <select name='categoria.idCategoria' class='form-select'>
+                                    <select name='categoria.idCategoria' class='form-select' required>
                                         <option th:each='c : ${categorias}' th:value='${c.idCategoria}'>
                                             [[${c.nombreCategoria}]]
                                         </option>
@@ -46,8 +46,8 @@
                                 <!-- Marca-->
                                 <div class='mb-3'>
                                     <label>[[#{zapato.marca}]]</label>
-                                    <select name='marca.idMarca' class='form-select'>
-                                        <option th:each='m : ${marcas}'th:value='${m.idMarca}'>
+                                    <select name='marca.idMarca' class='form-select' required>
+                                        <option th:each='m : ${marcas}' th:value='${m.idMarca}'>'>
                                             [[${m.nombreMarca}]]
                                         </option>
                                     </select>
@@ -80,7 +80,7 @@
                                 <!-- Imagen-->
                                 <div class="mb-3">
                                     <label>[[#{zapato.imagen}]]</label>
-                                    <input type="file" name="imagenFile" class="form-control" onchange="mostrarImagen(this);"/>
+                                    <input type="file" name="imagenFile" class="form-control" required onchange="mostrarImagen(this);"/>
                                     <img id="blah" src="#" height="200"/>
                                 </div>
 
@@ -132,7 +132,7 @@
                                             <td class="text-end">[[${#numbers.formatCurrency(z.precio)}]]</td>
                                             <td>[[${z.categoria.nombreCategoria}]]</td>
                                             <td>[[${z.marca.nombreMarca}]]</td>
-                                            <td><img th:src="@{${z.rutaImagen}}" height="75"/></td>
+                                            <td><img th:src="${z.rutaImagen}" height="75"/></td>
                                             <td th:text="${z.activo} ? 'Activo' : 'Inactivo'"></td>
 
                                             <td sec:authorize="hasRole('ROLE_ADMIN')">
@@ -213,9 +213,12 @@
                                 <div class="mb-3">
                                     <label>[[#{zapato.categoria}]]</label>
                                     <select th:field="*{categoria.idCategoria}" class="form-select">
-                                        <option th:each="c : ${categorias}" th:value="${c.idCategoria}">
-                                            [[${c.nombreCategoria}]]
+                                        <option th:each="c : ${categorias}"
+                                                th:value="${c.idCategoria}"
+                                                th:text="${c.nombreCategoria}"
+                                                th:selected="${c.idCategoria == zapato.categoria.idCategoria}">
                                         </option>
+
                                     </select>
                                 </div>
 
@@ -223,9 +226,12 @@
                                 <div class="mb-3">
                                     <label>[[#{zapato.marca}]]</label>
                                     <select th:field="*{marca.idMarca}" class="form-select">
-                                        <option th:each="m : ${marcas}" th:value="${m.idMarca}">
-                                            [[${m.nombreMarca}]]
+                                        <option th:each="m : ${marcas}"
+                                                th:value="${m.idMarca}"
+                                                th:text="${m.nombreMarca}"
+                                                th:selected="${m.idMarca == zapato.marca.idMarca}">
                                         </option>
+
                                     </select>
                                 </div>
 
@@ -258,7 +264,7 @@
                                     <label>[[#{zapato.imagen}]]</label>
                                     <input type="file" name="imagenFile" class="form-control"
                                            onchange="mostrarImagen(this);"/>
-                                    <img id="blah" th:src="@{${zapato.rutaImagen}}" height="200"/>
+                                    <img id="blah" th:src="${zapato.rutaImagen}" height="200"/>
                                 </div>
 
                             </div>

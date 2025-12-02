@@ -36,13 +36,11 @@ public class ZapatoController {
     @Autowired
     private MessageSource messageSource;
 
-   
     @GetMapping("/categoria/{idCategoria}")
     public String listarPorCategoria(@PathVariable Integer idCategoria, Model model) {
         try {
 
             var zapatos = zapatoService.getZapatosPorCategoria(idCategoria, false);
-
 
             model.addAttribute("zapatos", zapatos);
             model.addAttribute("totalZapatos", zapatos.size());
@@ -129,21 +127,32 @@ public class ZapatoController {
 
     @PostMapping("/eliminar")
     public String eliminar(@RequestParam Integer idZapato, RedirectAttributes redirectAttributes) {
-        String titulo = "todoOk";
-        String detalle = "mensaje.eliminado";
+
+        String tipo = "todoOk";            // success
+        String detalle = "mensaje.eliminado"; // clave del mensaje
+
         try {
             zapatoService.delete(idZapato);
+
         } catch (IllegalArgumentException e) {
-            titulo = "error";
+            tipo = "error";
             detalle = "zapato.error01";
+
         } catch (IllegalStateException e) {
-            titulo = "error";
+            tipo = "error";
             detalle = "zapato.error02";
+
         } catch (Exception e) {
-            titulo = "error";
+            tipo = "error";
             detalle = "zapato.error03";
         }
-        redirectAttributes.addFlashAttribute(titulo, messageSource.getMessage(detalle, null, Locale.getDefault()));
+
+        // mensaje final usando MessageSource
+        String mensaje = messageSource.getMessage(detalle, null, Locale.getDefault());
+
+        redirectAttributes.addFlashAttribute("tipo", tipo);
+        redirectAttributes.addFlashAttribute("mensaje", mensaje);
+
         return "redirect:/zapato/listado";
     }
 
@@ -165,7 +174,7 @@ public class ZapatoController {
         var marcas = marcaService.getMarcas();
         model.addAttribute("marcas", marcas);
 
-        return "/zapato/modifica";
+        return "zapato/modifica";
     }
 
 }
