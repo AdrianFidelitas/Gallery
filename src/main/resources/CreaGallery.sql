@@ -1,6 +1,6 @@
 /*
 Script de creacion de la base de datos para la tienda de zapatos Gallery Brands
-Crea el esquema, tablas y usuarios
+Version simplificada - SIN tabla de tallas separada
 */
 
 -- Para asegurarse que se creara solo una vez el base de datos y usuarios
@@ -13,16 +13,14 @@ CREATE database galleryB
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_unicode_ci;
   
--- Creacion de usuarisos con contraseñas seguras 
+-- Creacion de usuarios con contraseñas seguras 
 create user 'usuario_admin'@'%' identified by 'Usuar1o_Admin.';
 create user 'usuario_reportes'@'%' identified by 'Usuar1o_Reportes.';
-
 
 -- Asignacion de permisos a los usuarios
 grant select, insert, update, delete on galleryB.* to 'usuario_admin'@'%';
 grant select on galleryB.* to 'usuario_reportes'@'%';
 flush privileges;
-
 
 -- Seccion de Creacion de tablas
 
@@ -48,19 +46,20 @@ create table marca (
   nombre_marca VARCHAR(50) NOT NULL UNIQUE,
   PRIMARY KEY (id_marca)
 )
-
 ENGINE = InnoDB;
 
--- Tabla Zapato
+-- Tabla Zapato - VERSIÓN SIMPLIFICADA
 create table zapato (
   id_zapato INT NOT NULL AUTO_INCREMENT,
   id_categoria INT NOT NULL,
   id_marca INT NOT NULL,
   nombre_zapato VARCHAR(50) NOT NULL,
   descripcion text,
-  precio decimal(12,2)CHECK (precio >= 0),
+  precio decimal(12,2) CHECK (precio >= 0),
+  existencias int unsigned DEFAULT 0 CHECK (existencias >= 0),
+  marca VARCHAR(50) NOT NULL,  -- Campo adicional para mostrar
   ruta_imagen varchar(1024),
-  activo boolean,
+  activo boolean DEFAULT TRUE,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_zapato),
@@ -70,18 +69,6 @@ create table zapato (
   foreign key fk_producto_categoria (id_categoria) references categoria(id_categoria),
   foreign key fk_zapato_marca (id_marca) references marca (id_marca)
 )
-
-ENGINE = InnoDB;
-
--- Tabla talla zapato
-create table zapato_talla (
-  id_zapato INT NOT NULL,
-  talla VARCHAR (10) NOT NULL,
-  existencias INT UNSIGNED CHECK (existencias >= 0),
-  PRIMARY KEY (id_zapato, talla),
-  foreign key fk_zapato_talla (id_zapato) references zapato (id_zapato)
-)
-
 ENGINE = InnoDB;
 
 -- Tabla usuarios
@@ -132,10 +119,9 @@ create table facturas (
   INDEX ndx_id_usuario (id_usuario),
   foreign key fk_factura_usuario (id_usuario) references usuario (id_usuario)
 )
-
 ENGINE = InnoDB;
 
--- Tabla de ventas
+-- Tabla de ventas (SIMPLIFICADA - sin talla)
 create table venta (
   id_venta INT NOT NULL AUTO_INCREMENT,
   id_factura INT NOT NULL,
@@ -147,7 +133,7 @@ create table venta (
   PRIMARY KEY (id_venta),
   INDEX ndx_factura (id_factura),
   INDEX ndx_zapato (id_zapato),
-  UNIQUE (id_factura, id_zapato),
+  UNIQUE (id_factura, id_zapato),  -- Un zapato solo puede aparecer una vez por factura
   foreign key fk_venta_factura (id_factura) references facturas(id_factura),
   foreign key fk_venta_zapato (id_zapato) references zapato(id_zapato)
 )
@@ -163,18 +149,16 @@ create table carrito (
 )
 ENGINE=InnoDB;
 
--- Detalle carrito 
+-- Detalle carrito (SIMPLIFICADO - sin talla)
 create table carrito_detalle (
   id_carrito INT NOT NULL,
   id_zapato INT NOT NULL,
-  talla VARCHAR(10) NOT NULL,
   cantidad INT unsigned CHECK (cantidad > 0),
   precio_unitario decimal(12,2) CHECK (precio_unitario >= 0),
-  PRIMARY KEY (id_carrito,id_zapato,talla),
+  PRIMARY KEY (id_carrito,id_zapato),
   foreign key fk_carrito (id_carrito) references carrito (id_carrito),
   foreign key fk_carrito_zapato (id_zapato) references zapato (id_zapato)
 )
-
 ENGINE=InnoDB;
 
 -- Tabla de roles
@@ -185,7 +169,7 @@ create table rol (
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   primary key (id_rol)
   )
-  ENGINE = InnoDB;
+ENGINE = InnoDB;
   
 -- Tabla de relación entre usuarios y roles
 create table usuario_rol (
@@ -225,70 +209,48 @@ CREATE TABLE constante (
 )
 ENGINE = InnoDB;
 
-
 /*
-Este pobla la tablas con un registro para tenerlo como referencia
+Poblar las tablas con registros para tenerlos como referencia
 */
 
 -- Poblar tabla categoria
 INSERT INTO categoria (nombre_categoria, ruta_imagen, activo)
-VALUES ('Formal', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrE57O1gq8afzC8dGLZLrWBAPjzVyVsrzf3w&s', TRUE);
+VALUES ('Formal', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrE57O1gq8afzC8dGLZLrWBAPjzVyVsrzf3w&s', TRUE),
+('Deportiva', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5lCSWFEPwu0w257JgTz9iYpjMUOSZ-PcncA&s', TRUE),
+('Sneakers', 'https://m.media-amazon.com/images/I/81knDNjiLhL.jpg', TRUE);
 
 -- Poblar tabla marca
 INSERT INTO marca (nombre_marca)
 VALUES ('Sperry');
 
--- Poblar tabla zapato
-INSERT INTO zapato (id_categoria, id_marca, nombre_zapato, descripcion, precio, ruta_imagen, activo)
-VALUES (1, 1, 'Authentic Original', 'Zapato formal comodo', 50000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu8RIT5lQnBZfuyEnRllU-KiXx35nqPpfkdQ&s', TRUE);
-
--- Poblar tabla talla zapto
-INSERT INTO zapato_talla (id_zapato, talla, existencias)
-VALUES (1, 'S', 5);
+-- Poblar tabla zapato (VERSIÓN SIMPLIFICADA)
+INSERT INTO zapato (id_categoria, id_marca, nombre_zapato, descripcion, precio, existencias, marca, ruta_imagen, activo)
+VALUES 
+(1, 1, 'Authentic Original', 'Zapato formal cómodo y elegante', 50000.00, 25, 'Sperry', 
+ 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu8RIT5lQnBZfuyEnRllU-KiXx35nqPpfkdQ&s', TRUE);
+ 
 
 -- Poblar Usuario
 INSERT INTO usuario (username, password, nombre, apellidos, correo, telefono, ruta_imagen, activo)
-VALUES ('future123', 'password_prueba', 'Alfredo', 'Valenzuela', 'alfredo@mail.com', '88881234', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIt9pSWLfyT326xneRNhKBU3CHn4zVktQI0w&s', TRUE);
--- Poblar Factura
-INSERT INTO facturas (id_usuario, fecha, total, estado)
-VALUES (1, '2025-10-26', 50000, 'Activa');
-
-
--- Poblar Venta
-INSERT INTO venta (id_factura, id_zapato, precio_historico, cantidad)
-VALUES (1, 1, 50000, 1);
-
--- Poblar Carrito
-INSERT INTO carrito (id_usuario)
-VALUES (1);
-
--- Poblar Detalle Carrito 
-INSERT INTO carrito_detalle (id_carrito, id_zapato, talla, cantidad, precio_unitario)
-VALUES (1, 1, 'S', 1, 50000);
+VALUES 
+('admin', '$2a$10$r7vB1QY7q1S8d1J7q1S8d.1J7q1S8d1J7q1S8d1J7q1S8d1J7q1S8d', 'Alfredo', 'Valenzuela', 'alfredo@mail.com', '88881234', 
+ 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIt9pSWLfyT326xneRNhKBU3CHn4zVktQI0w&s', TRUE),
+ 
+('cliente1', '$2a$10$r7vB1QY7q1S8d1J7q1S8d.1J7q1S8d1J7q1S8d1J7q1S8d1J7q1S8d', 'María', 'Rodríguez', 'maria@mail.com', '88881235', 
+ NULL, TRUE);
 
 -- Poblar Rol
-INSERT INTO rol (rol) VALUES ('Admin');
+INSERT INTO rol (rol) 
+VALUES ('ROLE_ADMIN');
 
 -- Poblar Usuario rol
 INSERT INTO usuario_rol (id_usuario, id_rol)
 VALUES (1, 1);
 
 -- Poblar ruta
-INSERT INTO ruta (ruta, id_rol, requiere_rol)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) 
 VALUES ('/dashboard', 1, TRUE);
 
 -- Poblar constante
-INSERT INTO constante (atributo, valor)
+INSERT INTO constante (atributo, valor) 
 VALUES ('moneda', 'CRC');
-
-
-
-
-
-
-
-
-
-
-
-

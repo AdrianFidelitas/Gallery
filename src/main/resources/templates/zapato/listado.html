@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:insert="~{general/fragmentos :: head}">
+        <title th:text="${tituloPagina}"></title>
+        <link th:href="@{/css/zapato.css}" rel="stylesheet"/>
+    </head>
+
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <div class="shoe-gallery">
+
+            <!-- Header -->
+            <div class="gallery-header">
+                <h1 th:text="#{zapato.coleccionTitulo}">Nuestra Colección</h1>
+                <p th:text="${#messages.msg('zapato.descubrir', totalZapatos)}"></p>
+            </div>
+
+            <!-- Filtro -->
+            <div class="category-filters">
+                <a href="/categoria/listado"
+                   class="category-btn"
+                   th:classappend="${categoriaSeleccionada == null} ? 'active' : ''"
+                   th:text="#{zapato.volver}">
+                    Volver
+                </a>
+            </div>
+
+            <!-- Grid -->
+            <div th:if="${zapatos != null and !zapatos.empty}">
+                <div class="shoes-grid">
+                    <div class="shoe-card" th:each="z : ${zapatos}">
+
+                        <!-- Estado -->
+                        <span th:classappend="${z.activo} ? 'status-badge status-active' : 'status-badge status-inactive'"
+                              th:text="${z.activo} ? #{zapato.activo} : #{zapato.inactivo}">
+                            Estado
+                        </span>
+
+                        <!-- Imagen -->
+                        <div class="shoe-image-container">
+                            <img th:src="${z.rutaImagen}"
+                                 th:alt="${z.nombreZapato}"
+                                 class="shoe-image"
+                                 onerror="this.src='https://via.placeholder.com/300x300?text=Sin+Imagen'">
+                        </div>
+
+                        <!-- Información -->
+                        <div class="shoe-info">
+
+                            <div class="shoe-category"
+                                 th:text="${z.categoria?.nombreCategoria} ?: #{zapato.sinCategoria}">
+                                Categoría
+                            </div>
+
+                            <h3 class="shoe-name" th:text="${z.nombreZapato}">
+                                Nombre del Zapato
+                            </h3>
+
+                            <div class="shoe-brand"
+                                 th:text="${z.marca?.nombreMarca} ?: #{zapato.sinMarca}">
+                                Marca
+                            </div>
+
+                            <div class="shoe-price">
+                                ₡<span th:text="${#numbers.formatDecimal(z.precio, 0, 'COMMA', 0, 'POINT')}">0</span>
+                            </div>
+
+                            <!-- Acciones Admin -->
+                            <div class="admin-actions" sec:authorize="hasRole('ROLE_ADMIN')">
+                                <button class="btn-admin btn-delete"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#confirmModal"
+                                        th:attr="data-id=${z.idZapato}, data-descripcion=${z.nombreZapato}">
+                                    <i class="fa-solid fa-trash"></i>
+                                    <span th:text="#{zapato.eliminar}">Eliminar</span>
+                                </button>
+
+                                <a th:href="@{/zapato/modificar/{id}(id=${z.idZapato})}"
+                                   class="btn-admin btn-edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    <span th:text="#{zapato.editar}">Editar</span>
+                                </a>
+                            </div>
+
+                            <!-- Ver detalle -->
+                            <a th:href="@{/zapato/detalle/{id}(id=${z.idZapato})}"
+                               class="btn btn-success btn-lg"
+                               th:text="#{zapato.verDetalle}">
+                                Ver detalle
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Modal eliminar -->
+        <div class="modal fade" id="confirmModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form th:action="@{/zapato/eliminar}" method="post">
+                        <input type="hidden" name="idZapato" id="modalId"/>
+                        <div class="modal-header bg-warning text-white">
+                            <h5 class="modal-title" th:text="#{zapato.confirmarEliminacion}">
+                                Confirmar Eliminación
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                <span th:text="#{zapato.seguroEliminar}"></span>
+                                <span id="modalDescripcion" class="fw-bold"></span>?
+                            </p>
+                            <h6 th:text="#{zapato.noDeshacer}">
+                                Esta acción no se puede deshacer
+                            </h6>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger" th:text="#{zapato.eliminar}">
+                                Eliminar
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{zapato.cancelar}">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const confirmModal = document.getElementById('confirmModal');
+                if (confirmModal) {
+                    confirmModal.addEventListener('show.bs.modal', function (event) {
+                        const button = event.relatedTarget;
+                        const id = button.getAttribute('data-id');
+                        const descripcion = button.getAttribute('data-descripcion');
+                        document.getElementById('modalId').value = id;
+                        document.getElementById('modalDescripcion').textContent = descripcion;
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

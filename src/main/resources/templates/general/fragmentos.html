@@ -3,23 +3,24 @@
       xmlns:th="http://www.thymeleaf.org"      
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <head th:fragment="head">
-        <title>TechShop</title>
+        <title>Gallery</title>
         <meta charset="UTF-8"/>
         <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
         <link th:href="@{/webjars/font-awesome/css/all.css}" rel="stylesheet"/>
         <link th:href="@{/css/estilos.css}" rel="stylesheet"/>
+        <link th:href="@{/css/zapato.css}" rel="stylesheet"/>
+        <link th:href="@{/css/detalle.css}" rel="stylesheet"/>
         <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
         <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
-        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>        
+        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
     </head>
     <body>
         <header th:fragment="header" class="header">
-            <!-- NAVBAR -->
             <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top py-3 border-bottom">
                 <div class="container-fluid px-5">
 
                     <!-- Logo -->
-                    <a class="navbar-brand d-flex align-items-center" href="#">
+                    <a class="navbar-brand d-flex align-items-center" th:href="@{/Inicio}">
                         <img src="https://static1.squarespace.com/static/62840e26929fee1196f4ef41/t/6285664fafc3b8486963a668/1652909647737/L_GALLERY_1C_K_E.png?format=1500w" 
                              alt="Logo" width="120" class="logo">
                     </a>
@@ -33,18 +34,60 @@
                     <div class="collapse navbar-collapse" id="navbarContent">
 
                         <!-- Buscador centrado -->
-                        <div class="mx-auto my-3 my-lg-0 d-flex justify-content-center" style="max-width: 420px;">
+                        <div class="mx-auto my-3 my-lg-0 d-flex justify-content-center" >
                             <div class="input-group search-bar">
-                                <input type="search" class="form-control shadow-none" placeholder="Buscar productos..." aria-label="Buscar">
+                                <input type="search" class="form-control shadow-none" 
+                                       th:placeholder="#{header.nav.buscar.placeholder}" 
+                                       aria-label="Buscar">
                             </div>
                         </div>
 
                         <!-- Menú de navegación -->
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep active" href="#">INICIO</a></li>
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/sobre}">SOBRE NOSOTROS</a></li>
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/categoria/listado}">CATÁLOGO</a></li>
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" href="#">+INFO</a></li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep active" th:href="@{/Inicio}" th:text="#{header.nav.inicio}"></a></li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/sobre}" th:text="#{header.nav.sobreNosotros}"></a></li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/categoria/listado}" th:text="#{header.nav.catalogo}"></a></li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/zapato/listado}">
+                                    CRUD Zapatos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/marca/listado}">
+                                    CRUD Marca
+                                </a>
+                            </li>
+                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" href="#" th:text="#{header.nav.masInfo}"></a></li>
+
+
+
+                            <!-- Botones para indicar si esta logueado o no -->
+                            <ul class="navbar-nav" sec:authorize="!isAuthenticated()">
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold text-dark mx-2 nav-sep" th:href="@{/login}">
+                                        <i class="fas fa-sign-in"></i>
+                                        <span class="ms-1" th:text="#{header.nav.login  }"></span>
+                                    </a>
+                                </li>                                
+                            </ul>
+                            <ul class="navbar-nav" sec:authorize="isAuthenticated()">
+                                <li class="nav-item my-auto">
+                                    <a class="nav-link fw-semibold text-dark mx-2 nav-sep">
+                                        <i class="fas fa-user"></i>
+                                        <span sec:authentication="name" class="ms-1"> </span>
+                                    </a>
+                                </li>                                
+                                <li class="nav-item my-auto">
+                                    <form method="post" th:action="@{/logout}">
+                                        <button class="btn-nav-link fw-semibold text-dark mx-2 nav-sep" type="submit">
+                                            <i class="fas fa-sign-out"></i>
+                                            <span class="ms-1" th:text="#{header.nav.logout}"></span>
+                                        </button>
+                                    </form> 
+                                </li>                                
+                            </ul>
+
+
 
                             <!-- Ícono carrito -->
                             <li class="nav-item ms-3">
@@ -62,64 +105,56 @@
         <footer class="footer-gallery">
             <div class="container">
                 <div class="row">
-                    <!-- Columna 1: Logo y descripción -->
+                    <!-- Columna 1 -->
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="footer-logo">GALLERY</div>
-                        <p class="footer-desc">
-                            Tu destino premium para los mejores tenis del mercado. Calidad, estilo y comodidad en cada paso.
+                        <div class="footer-logo" th:text="#{footer.logo}"></div>
+                        <p class="footer-desc" th:text="#{footer.descripcion}">
                         </p>
                         <div class="social-icons">
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-tiktok"></i></a>
+                            <a href="https://www.instagram.com/gallerybrands.506/"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.tiktok.com/@gallerybrands.506"><i class="fab fa-tiktok"></i></a>
                         </div>
                     </div>
 
-                    <!-- Columna 2: Enlaces rápidos -->
+                    <!-- Columna 2 -->
                     <div class="col-lg-2 col-md-6 mb-4">
-                        <h4 class="footer-title">Enlaces Rápidos</h4>
+                        <h4 class="footer-title" th:text="#{footer.enlacesRapidos}"></h4>
                         <ul class="footer-links">
-                            <li><a href="#">Inicio</a></li>
-                            <li><a href="#">Novedades</a></li>
-                            <li><a href="#">Hombre</a></li>
-                            <li><a href="#">Mujer</a></li>
-                            <li><a href="#">Ofertas</a></li>
+                            <li><a th:href="@{/Inicio}" th:text="#{footer.enlace.inicio}"></a></li>
+                            <li><a th:href="@{/categoria/listado}" th:text="#{footer.enlace.catalogo}"></a></li>
+                            <li><a th:href="@{/sobre}" th:text="#{footer.enlace.preguntas}"></a></li>
                         </ul>
                     </div>
 
-                    <!-- Columna 3: Ayuda -->
+                    <!-- Columna 3 -->
                     <div class="col-lg-2 col-md-6 mb-4">
-                        <h4 class="footer-title">Ayuda</h4>
+                        <h4 class="footer-title" th:text="#{footer.ayuda}"></h4>
                         <ul class="footer-links">
-                            <li><a href="#">Contacto</a></li>
-                            <li><a href="#">Envíos</a></li>
-                            <li><a href="#">Devoluciones</a></li>
-                            <li><a href="#">Guía de tallas</a></li>
-                            <li><a href="#">Preguntas Frecuentes</a></li>
+                            <li><a href="#" th:text="#{footer.contacto}"></a></li>
                         </ul>
                     </div>
 
-                    <!-- Columna 4: Contacto y newsletter -->
+                    <!-- Columna 4 -->
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <h4 class="footer-title">Contacto</h4>
+                        <h4 class="footer-title" th:text="#{footer.contacto}"></h4>
                         <div class="contact-info">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>Av. Principal 123, Ciudad</span>
+                            <span th:text="#{footer.direccion}"></span>
                         </div>
                         <div class="contact-info">
                             <i class="fas fa-phone"></i>
-                            <span>+1 234 567 890</span>
+                            <span th:text="#{footer.telefono}"></span>
                         </div>
                         <div class="contact-info">
                             <i class="fas fa-envelope"></i>
-                            <span>info@gallery.com</span>
+                            <span th:text="#{footer.correo}"></span>
                         </div>
 
-                        <h5 class="mt-4 mb-3" style="color: var(--blanco);">Newsletter</h5>
-                        <p style="color: var(--gris-claro); font-size: 0.9rem;">Suscríbete para recibir ofertas exclusivas y novedades.</p>
+                        <h5 class="mt-4 mb-3"  th:text="#{footer.newsletter.titulo}"></h5>
+                        <p th:text="#{footer.newsletter.descripcion}">
+                        </p>
                         <form class="newsletter-form">
-                            <input type="email" class="newsletter-input" placeholder="Tu correo electrónico" required>
+                            <input type="email" class="newsletter-input" th:placeholder="#{footer.newsletter.placeholder}" required>
                                 <button type="submit" class="newsletter-btn">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
@@ -129,7 +164,7 @@
 
                 <!-- Métodos de pago -->
                 <div class="payment-methods">
-                    <h5 class="mb-3" style="color: var(--blanco);">Métodos de Pago</h5>
+                    <h5 class="mb-3"  th:text="#{footer.metodosPago}"></h5>
                     <div class="payment-icons">
                         <i class="fab fa-cc-visa"></i>
                         <i class="fab fa-cc-mastercard"></i>
@@ -141,43 +176,12 @@
 
                 <!-- Línea inferior -->
                 <div class="footer-bottom">
-                    <p>&copy; 2025 Gallery. Todos los derechos reservados. | Diseñado con <i class="fas fa-heart" style="color: #e25555;"></i> para amantes del calzado</p>
+                    <p th:utext="#{footer.copy}"></p>
                 </div>
             </div>
         </footer>
+
     </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
