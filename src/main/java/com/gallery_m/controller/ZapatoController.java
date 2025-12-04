@@ -5,6 +5,7 @@ import com.gallery_m.service.CategoriaService;
 import com.gallery_m.service.MarcaService;
 import com.gallery_m.service.ZapatoService;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +37,10 @@ public class ZapatoController {
     @Autowired
     private MessageSource messageSource;
 
+    //Listas por categoria
     @GetMapping("/categoria/{idCategoria}")
     public String listarPorCategoria(@PathVariable Integer idCategoria, Model model) {
         try {
-
             var zapatos = zapatoService.getZapatosPorCategoria(idCategoria, false);
 
             model.addAttribute("zapatos", zapatos);
@@ -47,6 +48,12 @@ public class ZapatoController {
             model.addAttribute("categoriaSeleccionada", idCategoria);
             model.addAttribute("categorias", categoriaService.getCategorias(false));
             model.addAttribute("marcas", marcaService.getMarcas());
+
+            //Esto es para listar si esta agotado o bajo en inventarios
+            long agotados = zapatos.stream().filter(z -> z.getExistencias() <= 0).count();
+            long bajoInventario = zapatos.stream().filter(z -> z.getExistencias() > 0 && z.getExistencias() < 10).count();
+            model.addAttribute("agotados", agotados);
+            model.addAttribute("bajoInventario", bajoInventario);
 
             return "zapato/listado";
 
@@ -58,24 +65,28 @@ public class ZapatoController {
         }
     }
 
+    //Listado general de los zapatos
     @GetMapping("/listado")
     public String listado(Model model) {
         var zapatos = zapatoService.getZapatosActivos();
 
-        zapatos.forEach(z -> System.out.println(
-                "ID: " + z.getIdZapato()
-                + ", Nombre: " + z.getNombreZapato()
-                + ", Categoría: " + (z.getCategoria() != null ? z.getCategoria().getNombreCategoria() : "null")
-        ));
+        // Esto es para estadisticas
+        long totalZapatos = zapatoService.countZapatosActivos();
+
+        List<Zapato> bajoInventario = zapatoService.getZapatosConBajoInventario();
+        List<Zapato> agotados = zapatoService.getZapatosAgotados();
 
         model.addAttribute("zapatos", zapatos);
-        model.addAttribute("totalZapatos", zapatos.size());
+        model.addAttribute("totalZapatos", totalZapatos);
+        model.addAttribute("agotados", agotados.size());
+        model.addAttribute("bajoInventario", bajoInventario.size());
         model.addAttribute("categorias", categoriaService.getCategorias(false));
         model.addAttribute("marcas", marcaService.getMarcas());
 
         return "zapato/listado";
     }
 
+    //Metodo para el detalle del zapato
     @GetMapping("/detalle/{idZapato}")
     public String detalleZapato(@PathVariable Integer idZapato, Model model) {
         try {
@@ -91,12 +102,13 @@ public class ZapatoController {
             return "zapato/detalle";
 
         } catch (Exception e) {
-            System.err.println("💥 ERROR en detalle: " + e.getMessage());
+            System.err.println(" Error  en detalle: " + e.getMessage());
             e.printStackTrace();
             return "redirect:/zapato/listado";
         }
     }
 
+    //Metodo de prueba del detalle
     @GetMapping("/test-detalle/{id}")
     @ResponseBody
     public String testDetalle(@PathVariable Integer id) {
@@ -106,15 +118,16 @@ public class ZapatoController {
 
             if (zapatoOpt.isPresent()) {
                 Zapato z = zapatoOpt.get();
-                return "✅ ZAPATO ENCONTRADO - Nombre: " + z.getNombreZapato();
+                return "Zapato encontrado " + z.getNombreZapato();
             } else {
-                return "❌ ZAPATO NO ENCONTRADO - ID: " + id;
+                return "Zapato no encontrado" + id;
             }
         } catch (Exception e) {
-            return "❌ ERROR: " + e.getMessage();
+            return "Error aparte  " + e.getMessage();
         }
     }
 
+    //Metodo guardar
     @PostMapping("/guardar")
     public String guardar(@Valid Zapato zapato,
             @RequestParam MultipartFile imagenFile,
@@ -125,37 +138,34 @@ public class ZapatoController {
         return "redirect:/zapato/listado";
     }
 
+    
+    //Metodo eliminar
     @PostMapping("/eliminar")
     public String eliminar(@RequestParam Integer idZapato, RedirectAttributes redirectAttributes) {
-
-        String tipo = "todoOk";            // success
-        String detalle = "mensaje.eliminado"; // clave del mensaje
+        String tipo = "todoOk";
+        String detalle = "mensaje.eliminado";
 
         try {
             zapatoService.delete(idZapato);
-
         } catch (IllegalArgumentException e) {
             tipo = "error";
             detalle = "zapato.error01";
-
         } catch (IllegalStateException e) {
             tipo = "error";
             detalle = "zapato.error02";
-
         } catch (Exception e) {
             tipo = "error";
             detalle = "zapato.error03";
         }
 
-        // mensaje final usando MessageSource
         String mensaje = messageSource.getMessage(detalle, null, Locale.getDefault());
-
         redirectAttributes.addFlashAttribute("tipo", tipo);
         redirectAttributes.addFlashAttribute("mensaje", mensaje);
-
         return "redirect:/zapato/listado";
     }
 
+    
+    //Metodo modificar por ID
     @GetMapping("/modificar/{idZapato}")
     public String modificar(@PathVariable Integer idZapato,
             Model model,
@@ -167,14 +177,50 @@ public class ZapatoController {
             return "redirect:/zapato/listado";
         }
         model.addAttribute("zapato", zapatoOpt.get());
-
         var categorias = categoriaService.getCategorias(false);
         model.addAttribute("categorias", categorias);
-
         var marcas = marcaService.getMarcas();
         model.addAttribute("marcas", marcas);
+
+        // List de tallas 
+        model.addAttribute("tallasDisponibles",
+                List.of("S", "M", "L", "XL"));
 
         return "zapato/modifica";
     }
 
+    //Metodo para acualizar existencias
+    @PostMapping("/actualizar-existencias")
+    public String actualizarExistencias(@RequestParam Integer idZapato,
+            @RequestParam Integer existencias,
+            RedirectAttributes redirectAttributes) {
+        try {
+            zapatoService.actualizarExistencias(idZapato, existencias);
+            redirectAttributes.addFlashAttribute("exito",
+                    "Existencias actualizadas correctamente");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Error al actualizar: " + e.getMessage());
+        }
+        return "redirect:/zapato/detalle/" + idZapato;
+    }
+
+    //Metodo para mostra zapatos por talla
+    @GetMapping("/talla/{talla}")
+    public String listarPorTalla(@PathVariable String talla, Model model) {
+        try {
+            var zapatos = zapatoService.getZapatosPorTalla(talla, false);
+            model.addAttribute("zapatos", zapatos);
+            model.addAttribute("totalZapatos", zapatos.size());
+            model.addAttribute("tallaSeleccionada", talla);
+            model.addAttribute("categorias", categoriaService.getCategorias(false));
+            model.addAttribute("marcas", marcaService.getMarcas());
+            return "zapato/listado";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al cargar zapatos: " + e.getMessage());
+            return "redirect:/zapato/listado";
+        }
+    }
 }

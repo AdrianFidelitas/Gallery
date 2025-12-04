@@ -2,6 +2,7 @@ package com.gallery_m.service;
 
 import com.gallery_m.domain.Zapato;
 import com.gallery_m.repository.ZapatoRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class ZapatoService {
     @Autowired
     private ZapatoRepository zapatoRepository;
     
-    /* Métodos de Consulta */
     
+    //Metodo get zapatos
     @Transactional(readOnly = true)
     public List<Zapato> getZapatos(boolean activo) {
         if (activo) {
@@ -26,37 +27,46 @@ public class ZapatoService {
         return zapatoRepository.findAll();
     }
     
-    // ✅ NUEVO: Obtener zapatos activos
+    //Metodo para obtener zapatos activos     
     @Transactional(readOnly = true)
     public List<Zapato> getZapatosActivos() {
         return zapatoRepository.findByActivoTrue();
     }
     
-    // ✅ NUEVO: Obtener zapatos por categoría
+    //Metodo para obtener zapatos por categoria
     @Transactional(readOnly = true)
     public List<Zapato> getZapatosPorCategoria(Integer idCategoria, boolean incluirInactivos) {
         if (incluirInactivos) {
             return zapatoRepository.findByCategoriaIdCategoria(idCategoria);
         } else {
-            return zapatoRepository.findByCategoriaIdCategoriaAndActivo(idCategoria, true);
+            
+            return zapatoRepository.findByCategoriaIdCategoriaAndActivoTrue(idCategoria);
         }
     }
     
-    // ✅ NUEVO: Obtener un zapato por ID
+    
+    //Metodo obtener zapato
     @Transactional(readOnly = true)
     public Optional<Zapato> getZapato(Integer idZapato) {
         return zapatoRepository.findById(idZapato);
     }
     
-    /* Métodos de Modificación */
     
+    //Metodo para guardar
     @Transactional
     public void save(Zapato zapato, MultipartFile imagenFile) {
         try {
-            // ✅ Aquí va la lógica para procesar la imagen si es necesario
+            // Establecer fechas si no existen
+            if (zapato.getIdZapato() == null) {
+                if (zapato.getFechaCreacion() == null) {
+                    zapato.setFechaCreacion(LocalDateTime.now());
+                }
+            }
+            zapato.setFechaModificacion(LocalDateTime.now());
+            
+            // Procesar imagen si existe
             if (imagenFile != null && !imagenFile.isEmpty()) {
-                // Lógica para guardar la imagen y actualizar rutaImagen
-                // Por ahora, solo guardamos el zapato sin procesar imagen
+                
             }
             
             zapatoRepository.save(zapato);
@@ -68,12 +78,15 @@ public class ZapatoService {
         }
     }
     
-    // ✅ NUEVO: Método save sobrecargado sin imagen
+    
+    //Metodo para guardar
     @Transactional
     public void save(Zapato zapato) {
         save(zapato, null);
     }
     
+    
+    //Metodo para eliminar
     @Transactional
     public void delete(Integer idZapato) {
         try {
@@ -82,10 +95,15 @@ public class ZapatoService {
             if (zapatoOpt.isPresent()) {
                 Zapato zapato = zapatoOpt.get();
                 
-                // ✅ Opción 1: Eliminación física (DELETE)
-                // zapatoRepository.delete(zapato);
+                // Verificar existencias antes de desactivar
+                if (zapato.getExistencias() > 0) {
+                    throw new IllegalStateException(
+                        "No se puede desactivar el zapato '" + zapato.getNombreZapato() + 
+                        "' (Talla: " + zapato.getTalla() + ") porque tiene " + 
+                        zapato.getExistencias() + " existencias."
+                    );
+                }
                 
-                // ✅ Opción 2: Eliminación lógica (UPDATE activo = false) - RECOMENDADO
                 zapato.setActivo(false);
                 zapatoRepository.save(zapato);
                 
@@ -93,22 +111,79 @@ public class ZapatoService {
                 throw new IllegalArgumentException("No se encontró el zapato con ID: " + idZapato);
             }
             
-        } catch (IllegalArgumentException e) {
-            throw e; // Relanzamos excepciones específicas
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error al eliminar el zapato: " + e.getMessage());
         }
     }
     
-    // ✅ NUEVO: Método para contar zapatos activos
+    
+    //Metodo para contar o obtener la cantidad de zapatos activos
     @Transactional(readOnly = true)
     public long countZapatosActivos() {
         return zapatoRepository.countByActivoTrue();
     }
     
-    // ✅ NUEVO: Método para verificar si existe un zapato por nombre
+    //Metodo para devolver si el zapato existe
     @Transactional(readOnly = true)
     public boolean existsByNombreZapato(String nombreZapato) {
         return zapatoRepository.existsByNombreZapato(nombreZapato);
+    }
+    
+    
+    
+    //Metodo para actualizar existencais 
+    @Transactional
+    public Zapato actualizarExistencias(Integer idZapato, Integer nuevasExistencias) {
+        //No deja eliminar mas de 0
+        if (nuevasExistencias < 0) {
+            throw new IllegalArgumentException("Las existencias no pueden ser negativas");
+        }
+        
+        Optional<Zapato> zapatoOpt = getZapato(idZapato);
+        
+        //No elimina zapatos que no tenga o encuente el ID
+        if (zapatoOpt.isEmpty()) {
+            throw new IllegalArgumentException("No se encontró el zapato con ID: " + idZapato);
+        }
+        
+        //Si no que deje actualizar las existencias
+        Zapato zapato = zapatoOpt.get();
+        zapato.setExistencias(nuevasExistencias);
+        zapato.setFechaModificacion(LocalDateTime.now());
+        
+        return zapatoRepository.save(zapato);
+    }
+    
+    
+    //Metodo para obtener la talla de los zapatos
+    @Transactional(readOnly = true)
+    public List<Zapato> getZapatosPorTalla(String talla, boolean incluirInactivos) {
+        if (incluirInactivos) {
+            return zapatoRepository.findByTalla(talla);
+        } else {
+            return zapatoRepository.findByTallaAndActivoTrue(talla);
+        }
+    }
+    
+    
+    //Metodo para obetner los zapatos agotados 
+    @Transactional(readOnly = true)
+    public List<Zapato> getZapatosAgotados() {
+        return zapatoRepository.findAgotados();
+    }
+    
+    
+    //Metodo para obtener los zapatos con bajo inventairo
+    @Transactional(readOnly = true)
+    public List<Zapato> getZapatosConBajoInventario() {
+        return zapatoRepository.findConBajoInventario();
+    }
+    
+    //Metodo para validar/buscar que existe el zapato por talla
+    @Transactional(readOnly = true)
+    public boolean existsByNombreYTallla(String nombreZapato, String talla) {
+        return zapatoRepository.existsByNombreZapatoAndTalla(nombreZapato, talla);
     }
 }

@@ -70,7 +70,18 @@
                                     <label>[[#{zapato.precio}]]</label>
                                     <input type="number" name="precio" class="form-control" required min="0"/>
                                 </div>
+                                <div class="mb-3">
+                                    <label>[[#{zapato.talla}]]</label>
+                                    <input type="text" name="talla" class="form-control" 
+                                           required maxlength="10" placeholder="Ej: S, M, 38, 40"/>
+                                </div>
 
+                                <!-- Existencias -->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.existencias}]]</label>
+                                    <input type="number" name="existencias" class="form-control" 
+                                           required min="0" value="0"/>
+                                </div>
                                 <!-- Activo-->
                                 <div class="mb-3">
                                     <label>[[#{zapato.activo}]]</label>
@@ -116,9 +127,11 @@
                                         <tr>
                                             <th>#</th>
                                             <th>[[#{zapato.nombre}]]</th>
+                                            <th>[[#{zapato.talla}]]</th> 
                                             <th>[[#{zapato.precio}]]</th>
                                             <th>[[#{zapato.categoria}]]</th>
                                             <th>[[#{zapato.marca}]]</th>
+                                            <th>[[#{zapato.existencias}]]</th> 
                                             <th>[[#{zapato.imagen}]]</th>
                                             <th>[[#{zapato.activo}]]</th>
                                             <th></th>
@@ -129,9 +142,18 @@
                                         <tr th:each="z : ${zapatos}">
                                             <td>[[${z.idZapato}]]</td>
                                             <td>[[${z.nombreZapato}]]</td>
+                                            <td>
+                                                <span class="badge bg-info">[[${z.talla}]]</span>
+                                            </td>
                                             <td class="text-end">[[${#numbers.formatCurrency(z.precio)}]]</td>
                                             <td>[[${z.categoria.nombreCategoria}]]</td>
                                             <td>[[${z.marca.nombreMarca}]]</td>
+                                            <td>
+                                                <span th:class="${z.existencias == 0} ? 'text-danger fw-bold' : 
+                                                      ${z.existencias < 10} ? 'text-warning fw-bold' : 'text-success'">
+                                                    [[${z.existencias}]]
+                                                </span>
+                                            </td>
                                             <td><img th:src="${z.rutaImagen}" height="75"/></td>
                                             <td th:text="${z.activo} ? 'Activo' : 'Inactivo'"></td>
 
@@ -164,7 +186,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- TOTAL DE ZAPATOS -->
+                <!-- Total de zapatos -->
                 <div class="col-md-3">
                     <div class="card text-center bg-success text-white mb-3">
                         <div class="card-body">
@@ -253,6 +275,19 @@
                                     <input type="number" th:field="*{precio}" class="form-control" required min="0"/>
                                 </div>
 
+                                <!-- Talla -->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.talla}]]</label>
+                                    <input type="text" th:field="*{talla}" class="form-control" 
+                                           required maxlength="10"/>
+                                </div>
+
+                                <!-- Existencias -->
+                                <div class="mb-3">
+                                    <label>[[#{zapato.existencias}]]</label>
+                                    <input type="number" th:field="*{existencias}" class="form-control" 
+                                           required min="0"/>
+                                </div>
                                 <!--Zapato Activo-->
                                 <div class="mb-3">
                                     <label>[[#{zapato.activo}]]</label>

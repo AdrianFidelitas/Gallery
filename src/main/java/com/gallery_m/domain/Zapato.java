@@ -2,6 +2,7 @@ package com.gallery_m.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -18,7 +19,7 @@ public class Zapato implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_zapato") // ¡ESTO ES IMPORTANTE!
+    @Column(name = "id_zapato") 
     private Integer idZapato;
     
     @ManyToOne
@@ -42,6 +43,19 @@ public class Zapato implements Serializable {
     @DecimalMin(value = "0.00", inclusive = true, message = "El precio debe ser mayor o igual a 0")
     private BigDecimal precio;
     
+    //Existencias que va guardar cuantos habra 
+    //Caracteristicas del los datos que va a tener la columna
+    @NotNull (message = "Las existencias no pueden estar vacias")//Que no sea null
+    @Min(value = 0, message = "Las existencias debe ser mayor o igual a 0") //Mayor o igual que cero segun la tabla en mysql
+    private Integer existencias;
+    
+    
+    //Talla
+    @Column(name = "talla", unique = true, nullable = false, length = 50)
+    @NotNull
+    @Size(max = 50)
+    private String talla; 
+    
     @Column(name = "ruta_imagen", length = 1024)
     @Size(max = 1024)
     private String rutaImagen;
@@ -53,4 +67,21 @@ public class Zapato implements Serializable {
     
     @Column(name = "fecha_modificacion")
     private LocalDateTime fechaModificacion;
+    
+    //Metodos extras
+    
+    //Metodo si esta agotado
+    public boolean isAgotado() {
+        return existencias != null && existencias <= 0;
+    }
+    
+    //Metodo si tiene bajo inventario o bueno pocos items
+    public boolean tieneBajoInventario() {
+        return existencias != null && existencias > 0 && existencias < 10;
+    }
+    
+    //Metodo para obtener el nombre completo
+    public String getNombreCompleto() {
+        return nombreZapato + " (Talla: " + talla + ")";
+    }
 }

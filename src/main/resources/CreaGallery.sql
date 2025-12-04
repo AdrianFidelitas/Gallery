@@ -57,7 +57,7 @@ create table zapato (
   descripcion text,
   precio decimal(12,2) CHECK (precio >= 0),
   existencias int unsigned DEFAULT 0 CHECK (existencias >= 0),
-  marca VARCHAR(50) NOT NULL,  -- Campo adicional para mostrar
+  talla VARCHAR(50) NOT NULL,
   ruta_imagen varchar(1024),
   activo boolean DEFAULT TRUE,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -224,9 +224,9 @@ INSERT INTO marca (nombre_marca)
 VALUES ('Sperry');
 
 -- Poblar tabla zapato (VERSIÓN SIMPLIFICADA)
-INSERT INTO zapato (id_categoria, id_marca, nombre_zapato, descripcion, precio, existencias, marca, ruta_imagen, activo)
+INSERT INTO zapato (id_categoria, id_marca, nombre_zapato, descripcion, precio, existencias,talla, ruta_imagen, activo)
 VALUES 
-(1, 1, 'Authentic Original', 'Zapato formal cómodo y elegante', 50000.00, 25, 'Sperry', 
+(1, 1, 'Authentic Original', 'Zapato formal cómodo y elegante', 50000.00, 25, 'S',
  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu8RIT5lQnBZfuyEnRllU-KiXx35nqPpfkdQ&s', TRUE);
  
 

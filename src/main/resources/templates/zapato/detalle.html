@@ -31,9 +31,40 @@
                 <div class="col-md-6 product-info">
 
                     <h1 class="product-title" th:text="${zapato.nombreZapato}">Nombre</h1>
+                    
+                    <!-- Talla -->
+                    <div class="mb-2">
+                        <span class="badge bg-primary fs-6">
+                            <i class="fas fa-ruler-vertical"></i> Talla: [[${zapato.talla}]]
+                        </span>
+                    </div>
 
                     <div class="d-flex align-items-center mt-3 mb-4">
                         <span class="price-amount">₡<span th:text="${zapato.precio}">0</span></span>
+                    </div>
+
+                    <!-- Existencias y estado -->
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <strong class="me-2">Existencias:</strong>
+                            <!-- ✅ CORREGIDO: Expresión Thymeleaf válida -->
+                            <span th:class="${zapato.existencias == 0} ? 'text-danger fw-bold fs-5' : 
+                                       (${zapato.existencias < 10} ? 'text-warning fw-bold fs-5' : 'text-success fw-bold fs-5')">
+                                [[${zapato.existencias}]]
+                            </span>
+                        </div>
+                        <div>
+                            <span th:if="${zapato.existencias == 0}" class="badge bg-danger fs-6">
+                                <i class="fas fa-exclamation-circle"></i> Agotado
+                            </span>
+                            <span th:if="${zapato.existencias > 0 and zapato.existencias < 10}" 
+                                  class="badge bg-warning text-dark fs-6">
+                                <i class="fas fa-exclamation-triangle"></i> Bajo inventario
+                            </span>
+                            <span th:if="${zapato.existencias >= 10}" class="badge bg-success fs-6">
+                                <i class="fas fa-check-circle"></i> Disponible
+                            </span>
+                        </div>
                     </div>
 
                     <div class="product-meta mb-4">
@@ -51,6 +82,25 @@
                     <div class="product-description mt-4 mb-4">
                         <h5 class="fw-bold" th:text="#{zapato.Descripcion}"></h5>
                         <p th:text="${zapato.descripcion}"></p>
+                    </div>
+
+                    <!-- Formulario para actualizar existencias (solo admin) -->
+                    <div sec:authorize="hasRole('ROLE_ADMIN')" class="mb-4">
+                        <h6 class="fw-bold">Actualizar existencias:</h6>
+                        <form th:action="@{/zapato/actualizar-existencias}" method="post" class="row g-2">
+                            <input type="hidden" name="idZapato" th:value="${zapato.idZapato}">
+                            <div class="col-md-8">
+                                <input type="number" name="existencias" 
+                                       class="form-control form-control-sm" 
+                                       th:value="${zapato.existencias}"
+                                       min="0" required>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-sm btn-primary w-100">
+                                    <i class="fas fa-sync-alt"></i> Actualizar
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
                     <div class="product-actions">
