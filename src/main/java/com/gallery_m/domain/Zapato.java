@@ -5,6 +5,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class Zapato implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_zapato") 
+    @Column(name = "id_zapato")
     private Integer idZapato;
     
     @ManyToOne
@@ -43,10 +44,9 @@ public class Zapato implements Serializable {
     @DecimalMin(value = "0.00", inclusive = true, message = "El precio debe ser mayor o igual a 0")
     private BigDecimal precio;
     
-    //Existencias que va guardar cuantos habra 
-    //Caracteristicas del los datos que va a tener la columna
-    @NotNull (message = "Las existencias no pueden estar vacias")//Que no sea null
-    @Min(value = 0, message = "Las existencias debe ser mayor o igual a 0") //Mayor o igual que cero segun la tabla en mysql
+    // ✅ NUEVO: Campo para manejar el inventario
+    @Column(name = "existencias")
+    @Min(value = 0, message = "Las existencias no pueden ser negativas")
     private Integer existencias;
     
     
@@ -73,7 +73,7 @@ public class Zapato implements Serializable {
     //Metodo si esta agotado
     public boolean isAgotado() {
         return existencias != null && existencias <= 0;
-    }
+}
     
     //Metodo si tiene bajo inventario o bueno pocos items
     public boolean tieneBajoInventario() {

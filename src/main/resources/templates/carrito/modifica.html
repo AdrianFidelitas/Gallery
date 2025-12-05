@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}">
+        <title>Modificar Cantidad</title>
+    </head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <div class="container my-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">
+                                <i class="bi bi-pencil-square"></i> Modificar Cantidad
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Información del producto -->
+                            <div class="text-center mb-4">
+                                <img th:src="${item.zapato.rutaImagen}" 
+                                     th:alt="${item.zapato.nombreZapato}"
+                                     class="img-thumbnail mb-3"
+                                     style="max-width: 200px; max-height: 200px; object-fit: cover;"
+                                     onerror="this.src='https://via.placeholder.com/200'">
+                                
+                                <h5 th:text="${item.zapato.nombreZapato}">Nombre del Zapato</h5>
+                                <p class="text-muted mb-1">
+                                    <small th:text="${item.zapato.marca.nombreMarca}">Marca</small>
+                                </p>
+                                <p class="mb-0">
+                                    <span class="badge bg-info">
+                                        Stock disponible: <span th:text="${item.zapato.existencias}">0</span>
+                                    </span>
+                                </p>
+                            </div>
+
+                            <!-- Formulario -->
+                            <form th:action="@{/carrito/actualizar}" method="post">
+                                <!-- ID del zapato (oculto) -->
+                                <input type="hidden" 
+                                       name="zapato.idZapato" 
+                                       th:value="${item.zapato.idZapato}">
+
+                                <!-- Campo de cantidad -->
+                                <div class="mb-3">
+                                    <label for="cantidad" class="form-label">
+                                        <strong>Nueva Cantidad:</strong>
+                                    </label>
+                                    <div class="input-group">
+                                        <button type="button" 
+                                                class="btn btn-outline-secondary"
+                                                onclick="decrementar()">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        
+                                        <input type="number" 
+                                               class="form-control text-center" 
+                                               id="cantidad"
+                                               name="cantidad" 
+                                               th:value="${item.cantidad}"
+                                               min="1"
+                                               th:max="${item.zapato.existencias}"
+                                               required>
+                                        
+                                        <button type="button" 
+                                                class="btn btn-outline-secondary"
+                                                onclick="incrementar()">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Cantidad actual en el carrito: <strong th:text="${item.cantidad}">0</strong>
+                                    </small>
+                                </div>
+
+                                <!-- Precio información -->
+                                <div class="alert alert-light">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Precio unitario:</span>
+                                        <strong>₡<span th:text="${#numbers.formatDecimal(item.precioHistorico, 0, 'COMMA', 2, 'POINT')}">0</span></strong>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Subtotal actual:</span>
+                                        <strong class="text-primary">
+                                            ₡<span id="subtotal" th:text="${#numbers.formatDecimal(item.subTotal, 0, 'COMMA', 2, 'POINT')}">0</span>
+                                        </strong>
+                                    </div>
+                                </div>
+
+                                <!-- Botones -->
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle"></i> Actualizar Cantidad
+                                    </button>
+                                    <a th:href="@{/carrito/listado}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-x-circle"></i> Cancelar
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script para incrementar/decrementar -->
+        <script th:inline="javascript">
+            const maxStock = [[${item.zapato.existencias}]];
+            const precioUnitario = [[${item.precioHistorico}]];
+
+            function incrementar() {
+                const input = document.getElementById('cantidad');
+                const valorActual = parseInt(input.value) || 1;
+                
+                if (valorActual < maxStock) {
+                    input.value = valorActual + 1;
+                    actualizarSubtotal();
+                }
+            }
+
+            function decrementar() {
+                const input = document.getElementById('cantidad');
+                const valorActual = parseInt(input.value) || 1;
+                
+                if (valorActual > 1) {
+                    input.value = valorActual - 1;
+                    actualizarSubtotal();
+                }
+            }
+
+            function actualizarSubtotal() {
+                const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
+                const subtotal = cantidad * precioUnitario;
+                document.getElementById('subtotal').textContent = subtotal.toLocaleString('es-CR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            // Actualizar subtotal al cambiar el input manualmente
+            document.getElementById('cantidad').addEventListener('input', actualizarSubtotal);
+        </script>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>

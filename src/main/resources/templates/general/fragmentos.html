@@ -57,9 +57,16 @@
                                     CRUD Marca
                                 </a>
                             </li>
-                            <li class="nav-item"><a class="nav-link fw-semibold text-dark mx-2 nav-sep" href="#" th:text="#{header.nav.masInfo}"></a></li>
-
-
+                            <li class="nav-item">
+                                <a th:href="@{/carrito/listado}" 
+                                   class="nav-link position-relative">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span th:if="${session.carrito != null && !#lists.isEmpty(session.carrito)}"
+                                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        [[${#lists.size(session.carrito)}]]
+                                    </span>
+                                </a>
+                            </li>
 
                             <!-- Botones para indicar si esta logueado o no -->
                             <ul class="navbar-nav" sec:authorize="!isAuthenticated()">
@@ -86,16 +93,6 @@
                                     </form> 
                                 </li>                                
                             </ul>
-
-
-
-                            <!-- Ícono carrito -->
-                            <li class="nav-item ms-3">
-                                <a href="#" class="nav-link text-dark position-relative fs-5">
-                                    <i class="bi bi-cart"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success small">3</span>
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </div>

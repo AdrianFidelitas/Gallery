@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}">
+        <title>Mi Carrito</title>
+    </head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <div class="container my-5">
+            <h1 class="mb-4">
+                <i class="bi bi-cart3"></i> Mi Carrito de Compras
+            </h1>
+
+            <!-- Alertas -->
+            <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${mensaje}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Carrito vacío -->
+            <div th:if="${#lists.isEmpty(carritoItems)}" class="text-center py-5">
+                <i class="bi bi-cart-x" style="font-size: 5rem; color: #ccc;"></i>
+                <h3 class="mt-3">Tu carrito está vacío</h3>
+                <p class="text-muted">¡Agrega algunos zapatos increíbles!</p>
+                <a th:href="@{/zapato/listado}" class="btn btn-primary mt-3">
+                    <i class="bi bi-shop"></i> Ir a la tienda
+                </a>
+            </div>
+
+            <!-- Carrito con productos -->
+            <div th:if="${!#lists.isEmpty(carritoItems)}" class="row">
+                <!-- Lista de items -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th class="text-center">Precio</th>
+                                            <th class="text-center">Cantidad</th>
+                                            <th class="text-center">Subtotal</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="item : ${carritoItems}">
+                                            <!-- Imagen y nombre -->
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img th:src="${item.zapato.rutaImagen}" 
+                                                         th:alt="${item.zapato.nombreZapato}"
+                                                         class="img-thumbnail me-3"
+                                                         style="width: 80px; height: 80px; object-fit: cover;"
+                                                         onerror="this.src='https://via.placeholder.com/80'">
+                                                        <div>
+                                                            <h6 class="mb-1" th:text="${item.zapato.nombreZapato}">Nombre</h6>
+                                                            <small class="text-muted">
+                                                                <span th:text="${item.zapato.marca.nombreMarca}">Marca</span>
+                                                            </small>
+                                                        </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Precio -->
+                                            <td class="text-center">
+                                                ₡<span th:text="${#numbers.formatDecimal(item.precioHistorico, 0, 'COMMA', 2, 'POINT')}">0</span>
+                                            </td>
+
+                                            <!-- Cantidad -->
+                                            <td class="text-center">
+                                                <span class="badge bg-secondary" th:text="${item.cantidad}">0</span>
+                                            </td>
+
+                                            <!-- Subtotal -->
+                                            <td class="text-center fw-bold">
+                                                ₡<span th:text="${#numbers.formatDecimal(item.subTotal, 0, 'COMMA', 2, 'POINT')}">0</span>
+                                            </td>
+
+                                            <!-- Acciones -->
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <!-- Modificar -->
+                                                    <a th:href="@{/carrito/modificar/{id}(id=${item.zapato.idZapato})}"
+                                                       class="btn btn-sm btn-outline-primary"
+                                                       title="Modificar cantidad">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </a>
+
+                                                    <!-- Eliminar -->
+                                                    <form th:action="@{/carrito/eliminar/{id}(id=${item.zapato.idZapato})}"
+                                                          method="post"
+                                                          style="display: inline;"
+                                                          onsubmit="return confirm('¿Eliminar este producto del carrito?');">
+                                                        <button type="submit" 
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                title="Eliminar">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="mt-3">
+                        <a th:href="@{/zapato/listado}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Seguir Comprando
+                        </a>
+
+                        <form th:action="@{/carrito/limpiar}" 
+                              method="post" 
+                              style="display: inline;"
+                              onsubmit="return confirm('¿Vaciar completamente el carrito?');">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="bi bi-trash"></i> Vaciar Carrito
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Resumen del carrito -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Resumen del Pedido</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Total de items:</span>
+                                <strong th:text="${totalUnidades}">0</strong>
+                            </div>
+
+                            <hr>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5>Total:</h5>
+                                    <h5 class="text-primary">
+                                        ₡<span th:text="${#numbers.formatDecimal(totalCarrito, 0, 'COMMA', 2, 'POINT')}">0</span>
+                                    </h5>
+                                </div>
+
+
+                                <!-- Botón de procesar compra  -->
+                                <button class="btn btn-success w-100 mb-2">
+                                    <div class="card-body">
+                                        <a th:href="@{/carrito/facturar}"
+                                           class="btn btn-info">
+                                            <i class='fas fa-fordward'></i> [[#{carrito.facturar}]]
+                                        </a>
+                                    </div>
+                                </button>
+
+                                <small class="text-muted">
+                                    <i class="bi bi-shield-check"></i> Compra segura
+                                </small>
+                        </div>
+                    </div>
+
+                    <!-- Info adicional -->
+                    <div class="card shadow-sm mt-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-info-circle"></i> Información
+                            </h6>
+                            <ul class="list-unstyled small mb-0">
+                                <li><i class="bi bi-check text-success"></i> Envío a todo el país</li>
+                                <li><i class="bi bi-check text-success"></i> Devoluciones en 30 días</li>
+                                <li><i class="bi bi-check text-success"></i> Garantía de calidad</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>
