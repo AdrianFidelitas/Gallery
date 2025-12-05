@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head th:replace="~{general/fragmentos :: head}">
         <title th:text="${tituloPagina}"></title>
     </head> 
     <body>
         <header th:replace="~{general/fragmentos :: header}"></header>
-        <div class="container my-5">
 
+        <div class="container my-5">
             <!-- Breadcrumb -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -15,6 +16,12 @@
                     <li class="breadcrumb-item active" aria-current="page" th:text="${zapato.nombreZapato}">Detalle</li>
                 </ol>
             </nav>
+
+            <!-- Alerta de éxito/error para agregar al carrito -->
+            <div id="alertaCarrito" style="display: none;" class="alert alert-dismissible fade show" role="alert">
+                <span id="mensajeAlerta"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
 
             <div class="row">
                 <!-- Imagen -->
@@ -29,37 +36,201 @@
 
                 <!-- Información -->
                 <div class="col-md-6 product-info">
-
                     <h1 class="product-title" th:text="${zapato.nombreZapato}">Nombre</h1>
 
-                    <div class="d-flex align-items-center mt-3 mb-4">
-                        <span class="price-amount">₡<span th:text="${zapato.precio}">0</span></span>
+                    <!-- Talla -->
+                    <div class="mb-2">
+                        <span class="badge bg-primary fs-6">
+                            <i class="fas fa-ruler-vertical"></i> Talla: [[${zapato.talla}]]
+                        </span>
                     </div>
 
+                    <!-- Precio -->
+                    <div class="d-flex align-items-center mt-3 mb-4">
+                        <span class="price-amount">₡<span th:text="${#numbers.formatDecimal(zapato.precio, 0, 'COMMA', 2, 'POINT')}">0</span></span>
+                    </div>
+
+                    <!-- Existencias y estado -->
+                            <strong class="me-2">Existencias:</strong>
+                            <span th:class="${zapato.existencias == 0} ? 'text-danger fw-bold fs-5' : 
+                                  (${zapato.existencias < 10} ? 'text-warning fw-bold fs-5' : 'text-success fw-bold fs-5')">
+                                [[${zapato.existencias}]]
+                            </span>
+                        </div>
+                        <div>
+                            <span th:if="${zapato.existencias == 0}" class="badge bg-danger fs-6">
+                                <i class="fas fa-exclamation-circle"></i> Agotado
+                            </span>
+                            <span th:if="${zapato.existencias > 0 and zapato.existencias < 10}" 
+                                  class="badge bg-warning text-dark fs-6">
+                                <i class="fas fa-exclamation-triangle"></i> Bajo inventario
+                            </span>
+                            <span th:if="${zapato.existencias >= 10}" class="badge bg-success fs-6">
+                                <i class="fas fa-check-circle"></i> Disponible
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Categoría y Marca -->
                     <div class="product-meta mb-4">
                         <span class="badge bg-dark"> 
-                            <strong th:text="#{zapato.Categoria}"></strong>:
                             <span th:text="${zapato.categoria.nombreCategoria}"></span>
                         </span>
 
                         <span class="badge bg-secondary ms-2">
-                            <strong th:text="#{zapato.Marca}"></strong>:
+                            <strong th:text="#{zapato.Marca}">Marca</strong>:
                             <span th:text="${zapato.marca.nombreMarca}"></span>
                         </span>
                     </div>
 
+                    <!-- Descripción -->
                     <div class="product-description mt-4 mb-4">
-                        <h5 class="fw-bold" th:text="#{zapato.Descripcion}"></h5>
+                        <h5 class="fw-bold" th:text="#{zapato.Descripcion}">Descripción</h5>
                         <p th:text="${zapato.descripcion}"></p>
                     </div>
 
-                    <div class="product-actions">
-                        <a onclick="history.back()" class="btn btn-dark w-100" th:text="#{accion.regresar}"></a>
+                    <!-- Formulario para actualizar existencias (solo admin) -->
+                    <div sec:authorize="hasRole('ROLE_ADMIN')" class="mb-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold">
+                                    <i class="fas fa-tools"></i> Panel de Administrador
+                                </h6>
+                                <form th:action="@{/zapato/actualizar-existencias}" method="post" class="row g-2">
+                                    <input type="hidden" name="idZapato" th:value="${zapato.idZapato}">
+                                        <div class="col-8">
+                                            <label for="existencias" class="form-label small mb-1">Actualizar existencias:</label>
+                                            <input type="number" 
+                                                   id="existencias"
+                                                   name="existencias" 
+                                                   class="form-control form-control-sm" 
+                                                   th:value="${zapato.existencias}"
+                                                   min="0" 
+                                                   required>
+                                        </div>
+                                        <div class="col-4 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-sm btn-primary w-100">
+                                                <i class="fas fa-sync-alt"></i> Actualizar
+                                            </button>
+                                        </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- Acciones del Usuario -->
+                    <div class="product-actions">
+                        <form th:action="@{/carrito/agregar}" method="post">
+                            <input type="hidden" name="idZapato" th:value="${zapato.idZapato}" />
+
+                            <button th:if="${zapato.existencias > 0 && zapato.activo}"
+                                    type="submit"
+                                    class="btn btn-primary w-100 mb-3">
+                                <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                            </button>
+                        </form>
+
+
+                        <!-- ✅ Botón deshabilitado si no hay stock -->
+                        <button th:if="${zapato.existencias <= 0 || !zapato.activo}" 
+                                type="button" 
+                                class="btn btn-secondary btn-lg w-100 mb-3"
+                                disabled>
+                            <i class="fas fa-ban"></i> 
+                            <span th:if="${zapato.existencias <= 0}">Sin Stock Disponible</span>
+                            <span th:if="${!zapato.activo}">Producto No Disponible</span>
+                        </button>
+
+                        <!-- Botón Regresar -->
+                        <a onclick="history.back()" 
+                           class="btn btn-outline-dark w-100" 
+                           th:text="#{accion.regresar}">Regresar</a>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- ✅ Script para agregar al carrito con AJAX -->
+        <script th:inline="javascript">
+            function agregarAlCarrito(idZapato) {
+                const btn = document.getElementById('btnAgregar');
+                const originalText = btn.innerHTML;
+
+                // Deshabilitar botón y mostrar loading
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Agregando...';
+
+                // Hacer petición AJAX
+                fetch('/carrito/agregar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'idZapato=' + idZapato
+                })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la respuesta del servidor');
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            // Éxito: mostrar mensaje
+                            mostrarAlerta('¡Zapato agregado al carrito correctamente!', 'success');
+
+                            // Actualizar contador del carrito en el header (si existe)
+                            actualizarContadorCarrito();
+
+                            // Restaurar botón después de 1 segundo
+                            setTimeout(() => {
+                                btn.disabled = false;
+                                btn.innerHTML = originalText;
+                            }, 1000);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            mostrarAlerta('Error al agregar al carrito. Por favor intente nuevamente.', 'danger');
+
+                            // Restaurar botón
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                        });
+            }
+
+            function mostrarAlerta(mensaje, tipo) {
+                const alerta = document.getElementById('alertaCarrito');
+                const mensajeSpan = document.getElementById('mensajeAlerta');
+
+                // Configurar tipo de alerta (success, danger, warning, info)
+                alerta.className = 'alert alert-' + tipo + ' alert-dismissible fade show';
+                mensajeSpan.innerHTML = '<i class="fas fa-' + (tipo === 'success' ? 'check-circle' : 'exclamation-circle') + '"></i> ' + mensaje;
+                alerta.style.display = 'block';
+
+                // Scroll suave hacia la alerta
+                alerta.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+
+                // Auto-ocultar después de 5 segundos
+                setTimeout(() => {
+                    alerta.style.display = 'none';
+                }, 5000);
+            }
+
+            function actualizarContadorCarrito() {
+                // Si tienes un contador en el header, actualizarlo aquí
+                const contador = document.getElementById('contadorCarrito');
+                if (contador) {
+                    const valorActual = parseInt(contador.textContent) || 0;
+                    contador.textContent = valorActual + 1;
+
+                    // Animación opcional
+                    contador.classList.add('animate__animated', 'animate__bounce');
+                    setTimeout(() => {
+                        contador.classList.remove('animate__animated', 'animate__bounce');
+                    }, 1000);
+                }
+            }
+        </script>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
     </body>
-    <footer th:replace="~{general/fragmentos :: footer}"></footer>
 </html>
