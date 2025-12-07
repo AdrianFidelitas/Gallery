@@ -1,10 +1,9 @@
 package com.gallery_m.domain;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Data;
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Entity
@@ -16,22 +15,20 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    private Integer idUsuario;
+    private Long idUsuario;
+
     private String username;
     private String password;
     private String nombre;
     private String apellidos;
     private String correo;
     private String telefono;
+
+    @Column(name = "ruta_imagen")
     private String rutaImagen;
+
     private boolean activo;
 
-    // Relación Many-to-Many con la entidad Rol
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "usuario_rol",
-            joinColumns = @JoinColumn(name = "id_usuario"),
-            inverseJoinColumns = @JoinColumn(name = "id_rol")
-    )
-    private Set<Rol> roles = new HashSet<>();
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
+    private List<UsuarioRol> roles;
 }
