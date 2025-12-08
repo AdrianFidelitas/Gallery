@@ -6,106 +6,109 @@
     <head th:replace="~{general/plantilla :: head}"/>
 
     <body>
-        <!-- Fragmento 1 para Agregar zapatos en ventana modal -->
-
+        <!-- Fragmento para Agregar zapatos -->
         <section th:fragment="agregar">
-            <div class="row py-4 mb-2 bg-light">
-                <div class="col-md-1"></div>
-                <div class="col-md-3">
-                    <button type="button" class="btn btn-primary" sec:authorize="hasRole('ROLE_ADMIN')"
-                            data-bs-toggle='modal' data-bs-target='#agregarZapatoModal'>
-                        <i class='fa-solid fa-plus'></i>[[#{zapato.agregar}]]
-                    </button>
-                </div>
+            <!-- Botón para abrir modal -->
+            <div class="mb-4">
+                <button type="button" class="btn btn-primary" 
+                        data-bs-toggle='modal' data-bs-target='#agregarZapatoModal'>
+                    <i class='fa-solid fa-plus'></i> Agregar Zapato
+                </button>
             </div>
 
-            <!-- Modal Agregar-->
+            <!-- Modal para Agregar -->
             <div class='modal fade' id='agregarZapatoModal' tabindex='-1'>
-                <div class='modal-dialog'>
+                <div class='modal-dialog modal-lg'>
                     <div class='modal-content'>
-                        <div class='modal-header bg-info text-white'>
-                            <h1 class='modal-title fs-5'>
-                                <i class='fa-solid fa-shoe-prints'></i>[[#{zapato.agregar}]]
-                            </h1>
+                        <div class='modal-header bg-primary text-white'>
+                            <h5 class='modal-title'>
+                                <i class='fa-solid fa-shoe-prints'></i> Nuevo Zapato
+                            </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <form th:action='@{/zapato/guardar}' th:object='${zapato}'
-                              class='was-validated' enctype='multipart/form-data' method="post">
+
+                        <!-- Formulario para agregar -->
+                        <form th:action='@{/zapato/guardar}' method="post" enctype='multipart/form-data'>
                             <div class='modal-body'>
-
-                                <!-- Categoria-->
+                                <!-- Categoría -->
                                 <div class='mb-3'>
-                                    <label>[[#{zapato.categoria}]]</label>
+                                    <label>Categoría *</label>
                                     <select name='categoria.idCategoria' class='form-select' required>
-                                        <option th:each='c : ${categorias}' th:value='${c.idCategoria}'>
-                                            [[${c.nombreCategoria}]]
+                                        <option value="">-- Seleccione --</option>
+                                        <option th:each='c : ${categorias}' 
+                                                th:value='${c.idCategoria}'
+                                                th:text='${c.nombreCategoria}'>
                                         </option>
                                     </select>
                                 </div>
 
-                                <!-- Marca-->
+                                <!-- Marca -->
                                 <div class='mb-3'>
-                                    <label>[[#{zapato.marca}]]</label>
+                                    <label>Marca *</label>
                                     <select name='marca.idMarca' class='form-select' required>
-                                        <option th:each='m : ${marcas}' th:value='${m.idMarca}'>'>
-                                            [[${m.nombreMarca}]]
+                                        <option value="">-- Seleccione --</option>
+                                        <option th:each='m : ${marcas}' 
+                                                th:value='${m.idMarca}'
+                                                th:text='${m.nombreMarca}'>
                                         </option>
                                     </select>
                                 </div>
 
-                                <!-- Nombre-->
+                                <!-- Nombre -->
                                 <div class="mb-3">
-                                    <label>[[#{zapato.nombre}]]</label>
-                                    <input type="text" name="nombreZapato" class="form-control" required maxlength="50"/>
+                                    <label>Nombre *</label>
+                                    <input type="text" name="nombreZapato" class="form-control" 
+                                           required maxlength="50"/>
                                 </div>
 
-                                <!-- Descripcion-->
+                                <!-- Descripción -->
                                 <div class="mb-3">
-                                    <label>[[#{zapato.descripcion}]]</label>
-                                    <textarea name="descripcion" class="form-control" rows="3" maxlength="1024"></textarea>
+                                    <label>Descripción</label>
+                                    <textarea name="descripcion" class="form-control" rows="2"></textarea>
                                 </div>
 
-                                <!-- Precio-->
+                                <!-- Precio -->
                                 <div class="mb-3">
-                                    <label>[[#{zapato.precio}]]</label>
-                                    <input type="number" name="precio" class="form-control" required min="0"/>
+                                    <label>Precio (₡) *</label>
+                                    <input type="number" name="precio" class="form-control" 
+                                           required min="0" step="0.01"/>
                                 </div>
+
+                                <!-- Talla -->
                                 <div class="mb-3">
-                                    <label>[[#{zapato.talla}]]</label>
+                                    <label>Talla *</label>
                                     <input type="text" name="talla" class="form-control" 
-                                           required maxlength="10" placeholder="Ej: S, M, 38, 40"/>
+                                           required maxlength="10"/>
                                 </div>
 
                                 <!-- Existencias -->
                                 <div class="mb-3">
-                                    <label>[[#{zapato.existencias}]]</label>
+                                    <label>Existencias *</label>
                                     <input type="number" name="existencias" class="form-control" 
                                            required min="0" value="0"/>
                                 </div>
-                                <!-- Activo-->
-                                <div class="mb-3">
-                                    <label>[[#{zapato.activo}]]</label>
-                                    <input type="checkbox" name="activo" class="form-check-input"/>
+
+                                <!-- Activo (por defecto true) -->
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" name="activo" class="form-check-input" checked value="true"/>
+                                    <label class="form-check-label">Activo</label>
                                 </div>
 
-                                <!-- Imagen-->
+                                <!-- Imagen -->
                                 <div class="mb-3">
-                                    <label>[[#{zapato.imagen}]]</label>
-                                    <input type="file" name="imagenFile" class="form-control" required onchange="mostrarImagen(this);"/>
-                                    <img id="blah" src="#" height="200"/>
+                                    <label>Imagen</label>
+                                    <input type="file" name="imagenFile" class="form-control" accept="image/*"/>
                                 </div>
-
                             </div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    [[#{accion.cerrar}]]
+                                    Cancelar
                                 </button>
                                 <button type="submit" class="btn btn-primary">
-                                    [[#{accion.guardar}]]
+                                    Guardar
                                 </button>
                             </div>
-
                         </form>
                     </div>
                 </div>

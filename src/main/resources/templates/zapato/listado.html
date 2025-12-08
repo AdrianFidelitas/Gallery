@@ -10,6 +10,12 @@
     <body>
         <header th:replace="~{general/fragmentos :: header}"></header>
 
+        <div class="container mt-4">
+            
+            <!-- Aca es para agregar el fragmentos agregar -->
+            <div th:replace="~{zapato/fragmentos :: agregar}"></div>
+        </div>
+
         <div class="shoe-gallery">
 
             <!-- Header -->
@@ -183,7 +189,6 @@
             </div>
         </div>
         <footer th:replace="~{general/fragmentos :: footer}"></footer>
-
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {

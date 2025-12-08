@@ -127,18 +127,44 @@ public class ZapatoController {
         }
     }
 
-    //Metodo guardar
+    // Metodo guardar 
     @PostMapping("/guardar")
     public String guardar(@Valid Zapato zapato,
-            @RequestParam MultipartFile imagenFile,
+            @RequestParam(required = false) MultipartFile imagenFile,
+            @RequestParam("categoria.idCategoria") Integer idCategoria,
+            @RequestParam("marca.idMarca") Integer idMarca,
             RedirectAttributes redirectAttributes) {
-        zapatoService.save(zapato, imagenFile);
-        redirectAttributes.addFlashAttribute("todoOk",
-                messageSource.getMessage("mensaje.actualizado", null, Locale.getDefault()));
+
+        try {
+            // Crear objetos Categoria y Marca con los IDs recibidos
+            com.gallery_m.domain.Categoria categoria = new com.gallery_m.domain.Categoria();
+            categoria.setIdCategoria(idCategoria);
+            zapato.setCategoria(categoria);
+
+            com.gallery_m.domain.Marca marca = new com.gallery_m.domain.Marca();
+            marca.setIdMarca(idMarca);
+            zapato.setMarca(marca);
+
+            // Si es nuevo zapato (no tiene ID), establecer valores por defecto
+            if (zapato.getIdZapato() == null) {
+                zapato.setActivo(true);
+                if (zapato.getExistencias() == null) {
+                    zapato.setExistencias(0);
+                }
+            }
+
+            zapatoService.save(zapato, imagenFile);
+            redirectAttributes.addFlashAttribute("exito",
+                    messageSource.getMessage("mensaje.guardado", null, Locale.getDefault()));
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Error al guardar: " + e.getMessage());
+        }
+
         return "redirect:/zapato/listado";
     }
 
-    
     //Metodo eliminar
     @PostMapping("/eliminar")
     public String eliminar(@RequestParam Integer idZapato, RedirectAttributes redirectAttributes) {
@@ -164,7 +190,6 @@ public class ZapatoController {
         return "redirect:/zapato/listado";
     }
 
-    
     //Metodo modificar por ID
     @GetMapping("/modificar/{idZapato}")
     public String modificar(@PathVariable Integer idZapato,
