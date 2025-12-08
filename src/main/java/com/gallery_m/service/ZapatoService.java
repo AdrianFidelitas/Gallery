@@ -94,7 +94,7 @@ public class ZapatoService {
         }
     }
 
-   //Este metodo es extra para poder procesar la imagen y guardarla  
+    //Este metodo es extra para poder procesar la imagen y guardarla  
     private String procesarYGuardarImagen(MultipartFile imagenFile) throws IOException {
         try {
             // 1. Crear nombre único para el archivo
@@ -225,4 +225,14 @@ public class ZapatoService {
     public boolean existsByNombreYTallla(String nombreZapato, String talla) {
         return zapatoRepository.existsByNombreZapatoAndTalla(nombreZapato, talla);
     }
+
+    //Metodo para traer los zapatos recomendados a la pantalla de inicio
+    @Transactional(readOnly = true)
+    public List<Zapato> getRecomendados() {
+        List<Zapato> activos = zapatoRepository.findByActivoTrue();
+        return activos.stream()
+                .limit(3)
+                .toList();
+    }
+
 }

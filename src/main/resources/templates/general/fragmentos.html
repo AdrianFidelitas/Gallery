@@ -15,7 +15,7 @@
         <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
     </head>
     <body>
-        <header th:fragment="header" class="header">
+        <header th:fragment="header" class="header d-print-none">
             <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top py-3 border-bottom">
                 <div class="container-fluid px-5">
 
@@ -99,7 +99,7 @@
             </nav>
         </header>
 
-        <footer class="footer-gallery">
+        <footer class="footer-gallery d-print-none">
             <div class="container">
                 <div class="row">
                     <!-- Columna 1 -->
