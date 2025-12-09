@@ -258,15 +258,15 @@ INSERT INTO usuario (username, password, nombre, apellidos, correo, telefono, ru
 VALUES 
 ('juan', '$2a$10$yItQW65HSi6hWP11dHxv2OWGyTf3q5YHPqki/KpvWoDoOSKzbSb.u', 
  'Juan', 'Pérez', 'juan@mail.com', '88881234', 
- 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIt9pSWLfyT326xneRNhKBU3CHn4zVktQI0w&s', TRUE),
+ 'https://st.depositphotos.com/1144472/2003/i/950/depositphotos_20030237-stock-photo-cheerful-young-man-over-white.jpg', TRUE),
  
 ('rebeca', '$2a$10$yItQW65HSi6hWP11dHxv2OWGyTf3q5YHPqki/KpvWoDoOSKzbSb.u', 
  'Rebeca', 'González', 'rebeca@mail.com', '88881235', 
- NULL, TRUE),
+ 'https://thumbs.dreamstime.com/b/smiling-business-woman-isolated-over-white-background-mature-49170992.jpg', TRUE),
  
 ('pedro', '$2a$10$yItQW65HSi6hWP11dHxv2OWGyTf3q5YHPqki/KpvWoDoOSKzbSb.u', 
  'Pedro', 'Martínez', 'pedro@mail.com', '88881236', 
- NULL, TRUE),
+ 'https://t4.ftcdn.net/jpg/02/98/28/89/360_F_298288984_8i0PB7s9aWPzi1LeuNGGrnjXkmXRpcZn.jpg', TRUE),
  
 ('admin', '$2a$10$yItQW65HSi6hWP11dHxv2OWGyTf3q5YHPqki/KpvWoDoOSKzbSb.u', 
  'Alfredo', 'Valenzuela', 'alfredo@mail.com', '88881237', 
@@ -287,10 +287,55 @@ VALUES
 (4, 1); -- admin es ROLE_ADMIN
 
 -- Poblar ruta
+-- Rutas de admin 
 INSERT INTO ruta (ruta, id_rol, requiere_rol) 
 VALUES 
 ('/dashboard', 1, TRUE),
+('/zapato/nuevo', 1, TRUE),
+('/zapato/modificar/**', 1, TRUE),
+('/zapato/eliminar/**', 1, TRUE),
+('/zapato/actualizar-existencias', 1, TRUE),
+('/categoria/listado',       1, TRUE),
+('/categoria/nuevo',         1, TRUE),
+('/categoria/guardar',       1, TRUE),
+('/categoria/modificar/**',  1, TRUE),
+('/categoria/eliminar/**',   1, TRUE),
+('/marca/listado',        1, TRUE),
+('/marca/nuevo',          1, TRUE),
+('/marca/guardar',        1, TRUE),
+('/marca/modificar/**',   1, TRUE),
+('/marca/eliminar/**',    1, TRUE),
 ('/', NULL, FALSE);
+
+-- Rutas publicas 
+
+INSERT INTO ruta (ruta, requiere_rol) VALUES
+('/',                FALSE),
+('/Inicio',          FALSE),
+('/login',           FALSE),
+('/sobre',           FALSE),
+('/terminos',        FALSE),
+('/privacidad',      FALSE),
+
+-- Zapatos públicos
+('/zapato/listado',  FALSE),
+('/zapato/detalle/**', FALSE),
+('/zapato/talla/**', FALSE),
+
+-- Carrito público (Spring normalmente permite ver pero no facturar)
+('/carrito/listado', FALSE),
+('/carrito/agregar', FALSE),
+('/carrito/limpiar', FALSE),
+('/carrito/eliminar/**', FALSE),
+('/carrito/modificar/**', FALSE),
+('/carrito/actualizar', FALSE),
+
+-- Recursos estáticos
+('/css/**',     FALSE),
+('/js/**',      FALSE),
+('/images/**',  FALSE),
+('/webjars/**', FALSE);
+
 
 -- Poblar constante
 INSERT INTO constante (atributo, valor) 
@@ -328,3 +373,6 @@ SELECT 'Username: pedro    | Password: 123 | Rol: USUARIO'
 UNION ALL
 SELECT 'Username: admin    | Password: 123 | Rol: ADMIN';
 SELECT '==============================================';
+
+
+
