@@ -230,15 +230,52 @@ VALUES
 ('Nike'),
 ('Adidas');
 
--- Poblar tabla zapato (VERSIÓN SIMPLIFICADA)
+/*
+POBLAR TABLA ZAPATO
+*/ 
+
 INSERT INTO zapato (id_categoria, id_marca, nombre_zapato, descripcion, precio, existencias, talla, ruta_imagen, activo)
 VALUES 
+-- Categoria Formal
 (1, 1, 'Authentic Original', 'Zapato formal cómodo y elegante', 50000.00, 25, 'S',
  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu8RIT5lQnBZfuyEnRllU-KiXx35nqPpfkdQ&s', TRUE),
+(1,1,'Sperry Derby Elegance','Derby para oficina',68000,12,'L','https://www.robertold.co.uk/cdn/shop/files/SPERRY-GOLD.jpg?v=1721141506',TRUE),
+(1,1,'Sperry Formal Premium','Cuero suave premium',83000,10,'S','https://www.sperry.com/cdn/shop/files/BLOG_SHOPIFY__Redesign_BANNER_2.jpg?v=1752675261',TRUE),
+(1,1,'Sperry Mocasin Terra','Mocasín elegante',64000,17,'M','https://m.media-amazon.com/images/I/71QUJR1to-L._AC_SX575_.jpg',TRUE),
+(1,1,'Sperry Black Derby','Derby negro clásico',71000,18,'L','https://www.sperry.com/cdn/shop/files/product_13935828_ao_202_20eye_wm_black_001-001-004_main_sq_wt.jpg?v=1755185308&width=990',TRUE),
+(1,1,'Sperry Brown Office','Zapato formal café',69000,14,'S','https://www.sperry.com/cdn/shop/files/split_gg_1920x.jpg?v=1761597505',TRUE),
+(1,1,'Sperry Executive','Zapato ejecutivo premium',97000,8,'M','https://cdn.shopify.com/s/files/1/0672/7172/1131/files/product_13881829_newmanoxfrdb_mm_black_001-001-031_main_sq_wt.jpg',TRUE),
+(1,1,'Sperry Classic Leather','Cuero curtido a mano',88000,11,'S','https://www.sperry.com/cdn/shop/files/product_13933587_ao1eye_wm_brown_200-001-006_main_sq_wt.jpg?v=1755185352&width=990',TRUE),
+(1,1,'Sperry Heritage','Modelo heritage elegante',76000,13,'L','https://cdn.shopify.com/s/files/1/0672/7172/1131/files/product_14106667_newtonboot_mm_beige_252-001-025_main_sq_wt.jpg',TRUE),
+(1,1,'Sperry Oxford Supreme','Oxford premium',93000,9,'M','https://cdn.shopify.com/s/files/1/0672/7172/1131/files/product_13881740_classcaptoxf_mm_green_300-001-043_main_sq_wt.jpg',TRUE),
+
+
+-- Categoria Deportiva
 (2, 2, 'Nike Air Max', 'Zapatilla deportiva con tecnología Air', 85000.00, 30, 'M',
  'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/99486859-0ff3-46b4-949b-2d16af2ad421/calzado-air-max-90-MwCLJK.png', TRUE),
+(2,2,'Nike Air Runner','Con tecnología Air',91000,20,'L','https://cdn-images.farfetch-contents.com/20/90/11/65/20901165_53514067_1000.jpg',TRUE),
+(2,2,'Nike Zoom Sprint','Tenis ligeros',78000,30,'S','https://frontrunnerathletics.com/cdn/shop/products/RivalSprintvolt_900x.png?v=1673630396',TRUE),
+(2,2,'Nike Flex Sport','Zapatilla flexible',69000,18,'M','https://www.sportline.cr/media/catalog/product/d/v/dv0746-004_phsrh000-1000.png?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width=&canvas=:&format=jpeg',TRUE),
+(2,2,'Nike Air Velocity','Muy cómodos para correr',99000,16,'L','https://image.goat.com/transform/v1/attachments/product_template_pictures/images/013/015/942/original/693361_010.png.png?action=crop&width=600',TRUE),
+(2,2,'Nike Trail X','Tenis deportivos resistentes',87000,28,'S','https://cdn-images.farfetch-contents.com/20/95/61/02/20956102_50922087_1000.jpg',TRUE),
+(2,2,'Nike RoadRunner','Para velocidad',90000,22,'M','https://m.media-amazon.com/images/I/71SKYmBQhEL._AC_SY575_.jpg',TRUE),
+(2,2,'Nike Air Boost','Amortiguación superior',102000,15,'L','https://i.ebayimg.com/00/s/OTUxWDE2MDA=/z/y4sAAOSwEtZjOssj/$_58.png',TRUE),
+(2,2,'Nike Cloud Sprint','Tenis ultra livianos',88000,19,'S','https://www.sportline.cr/media/catalog/product/f/n/fn0228-402_phsrh000-2000.jpeg?optimize=medium&bg-color=255,255,255&fit=bounds&height=&width=&canvas=:',TRUE),
+(2,2,'Nike Fusion Pro','Deportivos modernos',93000,11,'M','https://thumblr.uniid.it/product/266813/c6650c198d61.jpg?width=1920&format=webp&q=75',TRUE),
+
+
+-- Categoria Sneaker
 (3, 3, 'Adidas Superstar', 'Sneaker clásico icónico', 65000.00, 20, 'L',
- 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/3bbecbdf584e40398446a8bf0117cf62_9366/Tenis_Superstar_Blanco_EG4958_01_standard.jpg', TRUE);
+ 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/3bbecbdf584e40398446a8bf0117cf62_9366/Tenis_Superstar_Blanco_EG4958_01_standard.jpg', TRUE),
+(3,3,'Adidas Urban Moves','Diseño moderno',72000,15,'L','https://assets.adidas.com/images/w_1880,f_auto,q_auto/b43dc2da0f9e4080beadf1616377a47e_9366/ID8329_01_standard.jpg',TRUE),
+(3,3,'Adidas Retro Vibe','Sneaker retro',69000,18,'S','https://assets.adidas.com/images/w_450,f_auto,q_auto/f6cad9d44a794cd7b2f843209e5647ef_9366/IF7086_00_plp_standard.jpg',TRUE),
+(3,3,'Adidas Classic Court','Estilo court urbano',59000,26,'M','https://assets.adidas.com/images/w_940,f_auto,q_auto/3bbecbdf584e40398446a8bf0117cf62_9366/B75806_01_00_standard.jpg',TRUE),
+(3,3,'Adidas Fusion Neo','Sneaker moderno',77000,14,'L','https://assets.adidas.com/images/w_940,f_auto,q_auto/82d433384c7c435f9a2fa96d0101d323_9366/BD7633_01_00_standard.jpg',TRUE),
+(3,3,'Adidas Boost Street','Comodidad Boost',83000,10,'S','https://assets.adidas.com/images/w_1880,f_auto,q_auto/30763fe1599d438ab4eba89100352700_9366/B22705_01_standard.jpg',TRUE),
+(3,3,'Adidas Campus Lite','Estilo vintage',71000,17,'M','https://assets.adidas.com/images/w_1880,f_auto,q_auto/4d5d7b1ca06a44bab576af15010496b0_9366/GX2272_01_standard.jpg',TRUE),
+(3,3,'Adidas Urban Walk','Casual diario',64000,28,'L','https://assets.adidas.com/images/w_940,f_auto,q_auto/5643ea9848e94c1da869fd176bd19128_9366/IH8659_01_standard.jpg',TRUE),
+(3,3,'Adidas Neo Street','Sneaker mid',70000,19,'S','https://assets.adidas.com/images/w_1880,f_auto,q_auto/d6e324db24424689ad80950a6071fa5a_9366/JQ1042_01_00_standard.jpg',TRUE),
+(3,3,'Adidas Superstar ALT','Edición alternativa',78000,13,'M','https://assets.adidas.com/images/w_940,f_auto,q_auto/5015c872c4da4907b513277babee8f72_9366/JR8848_01_00_standard.jpg',TRUE);
 
 -- ====================================
 -- POBLAR TABLA ROL (3 roles básicos)
