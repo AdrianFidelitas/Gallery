@@ -81,60 +81,64 @@
 
                 <div class="row justify-content-center">
 
-                    <!-- Producto 1 -->
-                    <div class="col-md-4 mb-4">
+                    <div class="col-md-4 mb-4" th:each="z : ${productos}">
                         <div class="card border-0 shadow-sm h-100">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/proyectowebpatrones-7562d.firebasestorage.app/o/Imagenes%2Fnike-air-max-90-essential-wolf-s-size-7-616730-012.jpg?alt=media&token=8a0d33a3-9e30-4dfb-9f40-58c87950d10d"
-                                 class="card-img-top producto-img" alt="Producto 1">
-                                <div class="card-body">
-                                    <h5 class="card-title">Nombre del Producto</h5>
-                                    <p class="card-text text-muted">$$$</p>
-                                </div>
-                        </div>
-                    </div>
 
-                    <!-- Producto 2 -->
-                    <div class="col-md-4 mb-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/proyectowebpatrones-7562d.firebasestorage.app/o/Imagenes%2Fchampiones-adidas-forum-low-verde-championes-adidas-forum-low-verde.jpg?alt=media&token=e2092b28-3ff1-49eb-bba4-7c87670d3be6"
-                                 class="card-img-top producto-img" alt="Producto 2">
-                                <div class="card-body">
-                                    <h5 class="card-title">Nombre del Producto</h5>
-                                    <p class="card-text text-muted">$$$</p>
-                                </div>
-                        </div>
-                    </div>
+                            <img class="card-img-top producto-img"
+                                 th:src="${z.rutaImagen}"
+                                 alt="Producto">
 
-                    <!-- Producto 3 -->
-                    <div class="col-md-4 mb-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/proyectowebpatrones-7562d.firebasestorage.app/o/Imagenes%2F100000317_1.webp?alt=media&token=f68e4725-f9d1-4357-8227-fe1abf8d4ffe"
-                                 class="card-img-top producto-img" alt="Producto 3">
                                 <div class="card-body">
-                                    <h5 class="card-title">Nombre del Producto</h5>
-                                    <p class="card-text text-muted">$$$</p>
+                                    <h5 class="card-title" th:text="${z.nombreZapato}"></h5>
+
+                                    <p class="card-text text-muted">
+                                        ₡ <span th:text="${z.precio}"></span>
+                                    </p>
+
+                                    <a th:href="@{'/zapato/detalle/' + ${z.idZapato}}"
+                                       class="btn btn-success btn-sm">
+                                        Ver Detalles
+                                    </a>
                                 </div>
+
                         </div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- Estilo para unificar tamaño de las imágenes -->
             <style>
                 .producto-img {
-                    height: 280px;           /* altura uniforme */
-                    object-fit: cover;       /* recorta sin deformar */
-                    object-position: center; /* centra la imagen */
-                    border-radius: 0.5rem 0.5rem 0 0;
+                    height: 280px;
+                    width: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                    border-radius: 8px 8px 0 0;
                 }
 
                 @media (max-width: 768px) {
                     .producto-img {
-                        height: 200px; /* más pequeño en móvil */
+                        height: 200px;
                     }
                 }
             </style>
+        </section>
+
+        <!-- Estilo para unificar tamaño de las imágenes -->
+        <style>
+            .producto-img {
+                height: 280px;
+                object-fit: cover;
+                object-position: center;
+                border-radius: 0.5rem 0.5rem 0 0;
+            }
+
+            @media (max-width: 768px) {
+                .producto-img {
+                    height: 200px;
+                }
+            }
+        </style>
         </section>
 
         </section>

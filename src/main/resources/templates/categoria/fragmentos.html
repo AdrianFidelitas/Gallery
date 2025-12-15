@@ -5,32 +5,42 @@
     <head th:replace="~{general/plantilla :: head}"/>
 
     <body>
-
-        <!-- fragmento 2 para el listado de categorias como catálogo -->
+        <!-- Fragmento 2 para el listado de categorías como catálogo -->
         <section th:fragment="listado" class="p-3">
             <div class="row p-3">
                 <div class="col-12">
                     <div class="card p-4 mb-4">
                         <div class="card-header bg-white text-white">
-                            <h2 class="text-center text-secondary mb-0">
-                                Encuentra Tu Par Ideal
-                            </h2>
+                            <h2 class="text-center text-secondary mb-0" th:text="#{listado.titulo}"></h2>
                         </div>
                         <div class="card-body">
-                            <!-- Barra de búsqueda -->
+                            <!-- Barra de búsqueda CON FORMULARIO -->
                             <div class="row mb-4">
                                 <div class="col-md-8 mx-auto">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control form-control-lg" 
-                                               placeholder="Buscar categorías...">
-                                            <span class="input-group-text" role='button'>
+                                    <form th:action="@{/categoria/listado}" method="get">
+                                        <div class="input-group">
+                                            <input 
+                                                type="text" 
+                                                name="busqueda"
+                                                class="form-control form-control-lg" 
+                                                th:placeholder="#{listado.buscar.placeholder}"
+                                                th:value="${busqueda}">
+                                            <button class="input-group-text" type="submit">
                                                 <i class="far fa-paper-plane"></i>
-                                            </span>
-                                    </div>
+                                            </button>
+                                            <!-- Botón para limpiar búsqueda -->
+                                            <a th:href="@{/categoria/listado}" 
+                                               class="btn btn-secondary"
+                                               th:if="${busqueda != null and busqueda != ''}">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </div>
+                                    </form>
+                                    
                                 </div>
                             </div>
 
-                            <!-- Catálogo de categorías (estilo minimalista negro/blanco) -->
+                            <!-- Catálogo de categorías -->
                             <div th:if="${categorias != null and !categorias.empty}" class="container my-5">
                                 <div class="row g-4">
                                     <div th:each="c : ${categorias}" class="col-12 col-sm-6 col-md-4 col-lg-4">
@@ -41,11 +51,10 @@
                                                      th:alt="${c.nombreCategoria}"
                                                      class="card-img-top h-100 w-100"
                                                      style="object-fit: cover; filter: brightness(0.8); transition: transform 0.4s ease, filter 0.4s ease;">
-                                                    <div class="overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                                                         style="background: rgba(0,0,0,0.55); opacity: 0; transition: opacity 0.4s;">
-                                                        <span th:text="${c.nombreCategoria}" 
-                                                              class="fw-semibold text-white fs-5"></span>
-                                                    </div>
+                                                <div class="overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                                                     style="background: rgba(0,0,0,0.55); opacity: 0; transition: opacity 0.4s;">
+                                                    <span th:text="${c.nombreCategoria}" class="fw-semibold text-white fs-5"></span>
+                                                </div>
                                             </div>
 
                                             <!-- Cuerpo -->
@@ -56,9 +65,11 @@
                                             <!-- Footer -->
                                             <div class="card-footer bg-transparent border-0 pb-4">
                                                 <div class="d-grid px-3">
-                                                    <a th:href="@{/zapatos/categoria/}+${c.idCategoria}"
-                                                       class="btn btn-outline-light rounded-pill fw-semibold transition-all">
-                                                        <i class="fas fa-eye me-2"></i> Ver Productos
+                                                    <a th:href="@{/zapato/categoria/{id}(id=${c.idCategoria})}"
+                                                       class="btn btn-outline-light rounded-pill fw-semibold transition-all"
+                                                       th:attr="aria-label=#{listado.verProductos}">
+                                                        <i class="fas fa-eye me-2"></i>
+                                                        <span th:text="#{listado.verProductos}"></span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -70,15 +81,22 @@
                             <!-- Mensaje cuando no hay categorías -->
                             <div class="text-center p-5" th:if="${categorias == null or categorias.empty}">
                                 <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                                <h4 class="text-muted">[[#{lista.vacia}]]</h4>
-                                <p class="text-muted">No hay categorías disponibles en este momento.</p>
+                                <h4 class="text-muted">
+                                    <span th:if="${busqueda != null and busqueda != ''}">No se encontraron categorías</span>
+                                    <span th:if="${busqueda == null or busqueda == ''}" th:text="#{lista.vacia}"></span>
+                                </h4>
+                                <p class="text-muted">
+                                    <span th:if="${busqueda != null and busqueda != ''}">
+                                        Intenta con otro término de búsqueda o 
+                                        <a th:href="@{/categoria/listado}">ver todas las categorías</a>
+                                    </span>
+                                    <span th:if="${busqueda == null or busqueda == ''}" th:text="#{lista.vacia.descripcion}"></span>
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-
     </body>
 </html>

@@ -22,22 +22,28 @@ public class MarcaController {
     private final MarcaService marcaService;
     private final MessageSource messageSource;
 
-    //Constructor
+    // Constructor
     public MarcaController(MarcaService marcaService, MessageSource messageSource) {
         this.marcaService = marcaService;
         this.messageSource = messageSource;
     }
 
-    //Metodo listado
+    // Método listado - IMPORTANTE: Agregar Marca vacía al modelo
     @GetMapping("/listado")
     public String listado(Model model) {
         var marcas = marcaService.getMarcas();
+        
+        // Agregar la lista de marcas
         model.addAttribute("marcas", marcas);
         model.addAttribute("totalMarcas", marcas.size());
+        
+        // AGREGAR ESTA LÍNEA: Crear y agregar una marca vacía para el formulario
+        model.addAttribute("marca", new Marca());
+        
         return "marca/listado";
     }
 
-    //Metodo guardar
+    // Método guardar
     @PostMapping("/guardar")
     public String guardar(@Valid Marca marca, RedirectAttributes redirectAttributes) {
         marcaService.save(marca);
@@ -46,7 +52,7 @@ public class MarcaController {
         return "redirect:/marca/listado";
     }
 
-    //Metodo Elimnar
+    // Método Eliminar
     @PostMapping("/eliminar")
     public String eliminar(@RequestParam Integer idMarca, RedirectAttributes redirectAttributes) {
         marcaService.delete(idMarca);
@@ -55,14 +61,16 @@ public class MarcaController {
         return "redirect:/marca/listado";
     }
     
-    //Metodo modificar por idMarca
+    // Método modificar por idMarca
     @GetMapping("/modificar/{idMarca}")
     public String modificar(@PathVariable Integer idMarca, Model model) {
         Optional<Marca> marcaOpt = marcaService.getMarca(idMarca);
         if (marcaOpt.isEmpty()) {
             return "redirect:/marca/listado";
         }
+        
+        // Agregar la marca al modelo
         model.addAttribute("marca", marcaOpt.get());
-        return "/marca/modifica";
+        return "marca/modifica";
     }
 }

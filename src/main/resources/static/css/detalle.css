@@ -1,0 +1,96 @@
+/* ---- Contenedor de la imagen ---- */
+.product-image-container {
+    background: #f3f3f3;
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image {
+    max-width: 100%;
+    max-height: 480px;
+    object-fit: contain;
+    transition: transform 0.25s ease;
+}
+
+.product-image:hover {
+    transform: scale(1.04);
+}
+
+/* ---- Títulos y texto estilo StockX ---- */
+.product-title {
+    font-size: 2.7rem;
+    font-weight: 800;
+    color: #111;
+    line-height: 1.1;
+}
+
+.price-amount {
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: #27ae60;
+}
+
+/* ---- Badges ---- */
+.product-meta .badge {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+}
+
+/* ---- Descripción ---- */
+.product-description {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 20px 0;
+    font-size: 1rem;
+    color: #444;
+}
+
+/* ---- Botón ---- */
+.product-actions .btn {
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+.product-actions .btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ---- Breadcrumb ---- */
+.breadcrumb {
+    background: transparent;
+    font-size: 0.9rem;
+}
+
+.breadcrumb-item a {
+    color: #7a7a7a;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    font-weight: bold;
+    color: #111;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .product-title {
+        font-size: 2rem;
+    }
+
+    .price-amount {
+        font-size: 1.8rem;
+    }
+
+    .product-image-container {
+        padding: 20px;
+    }
+}

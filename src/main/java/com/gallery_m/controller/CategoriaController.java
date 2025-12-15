@@ -3,6 +3,7 @@ package com.gallery_m.controller;
 import com.gallery_m.domain.Categoria;
 import com.gallery_m.service.CategoriaService;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,23 @@ public class CategoriaController {
 
     /*Aca defini el metodo que va a atender la ruta categoria/listado*/
     @GetMapping("/listado")
-    public String listado(Model model) {
-        //Recupera en categorias en esta variable la raylist
-        var categorias = categoriaService.getCategorias(false);
-        //Importa o inyecta los datos a model
+    public String listado(
+            @RequestParam(value = "busqueda", required = false) String busqueda,
+            Model model) {
+
+        List<Categoria> categorias;
+
+        // Si hay texto de búsqueda, buscar; si no, mostrar todas
+        if (busqueda != null && !busqueda.trim().isEmpty()) {
+            categorias = categoriaService.buscarCategorias(busqueda, false);
+            model.addAttribute("busqueda", busqueda);
+        } else {
+            categorias = categoriaService.getCategorias(false);
+        }
+
         model.addAttribute("categorias", categorias);
         model.addAttribute("totalCategorias", categorias.size());
+
         return "/categoria/listado";
     }
 }
