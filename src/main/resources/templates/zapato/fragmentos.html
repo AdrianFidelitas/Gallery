@@ -7,7 +7,7 @@
 
     <body>
         <!-- Fragmento para Agregar zapatos -->
-        <section th:fragment="agregar">
+        <section th:fragment="agregar" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_VENDEDOR')">
             <!-- Botón para abrir modal -->
             <div class="mb-4">
                 <button type="button" class="btn btn-primary" 
