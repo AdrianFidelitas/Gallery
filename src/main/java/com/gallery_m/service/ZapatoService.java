@@ -140,14 +140,6 @@ public class ZapatoService {
             if (zapatoOpt.isPresent()) {
                 Zapato zapato = zapatoOpt.get();
 
-                // Verificar existencias antes de desactivar
-                if (zapato.getExistencias() > 0) {
-                    throw new IllegalStateException(
-                            "No se puede desactivar el zapato '" + zapato.getNombreZapato()
-                            + "' (Talla: " + zapato.getTalla() + ") porque tiene "
-                            + zapato.getExistencias() + " existencias."
-                    );
-                }
 
                 zapato.setActivo(false);
                 zapatoRepository.save(zapato);
